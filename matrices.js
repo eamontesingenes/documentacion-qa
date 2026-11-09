@@ -20,7 +20,7 @@ const MATRIZ_IC_BASE = [
     "Envio a Infunnel",
     "Envio a SI (Datos + Filiacion)",
     "Envio a RS (MX/USA)",
-    "Envio a Hspot (Datos completos)",
+    "Envio a Hspot (Cita, Medico, Etc.)",
     "IM",
     "Intelisis",
   ]},
