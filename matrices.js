@@ -234,4 +234,14 @@ async function matExportarExcel() {
   URL.revokeObjectURL(a.href);
 }
 
+// Copia el número de la tarjeta (sin espacios, listo para pegar en el checkout).
+function matCopiarTarjeta(tarjeta, numero) {
+  navigator.clipboard.writeText(numero).then(() => {
+    const num = tarjeta.querySelector('.numTarjeta');
+    const original = num.textContent;
+    num.textContent = '✓ copiado';
+    setTimeout(() => { num.textContent = original; }, 900);
+  }).catch(() => { });
+}
+
 document.addEventListener('DOMContentLoaded', matRender);

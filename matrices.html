@@ -30,13 +30,43 @@
     <header class="doc-head">
       <div class="eyebrow"><span class="dot"></span> Documentación técnica · Matrices</div>
       <h1>Matrices</h1>
-      <p class="lede">La Matriz IC de Fertilidad / Subrogado: todo lo que se debe cubrir en una
-        liberación, sección por sección. Marca el Estado con clic para visualizar tu corrida (se
-        guarda solo en tu navegador) y expórtala a Excel con tus estados para el registro.</p>
     </header>
 
     <div class="doc-body">
       <div id="matrices-panel" style="margin-top:26px;"></div>
+
+      <!-- ===== MATERIAL PARA PRUEBAS ===== -->
+      <section id="material">
+        <div class="secHead"><span class="bar"></span><h2>Material para Pruebas</h2></div>
+
+        <h3 class="matSubTitulo">Tarjetas de Crédito</h3>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '4242424242424242')" title="Clic para copiar el número">
+            <h3><span class="ic">V</span> Visa</h3>
+            <p class="numTarjeta">4242 4242 4242 4242</p>
+          </div>
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '5555555555555555')" title="Clic para copiar el número">
+            <h3><span class="ic">M</span> Mastercard</h3>
+            <p class="numTarjeta">5555 5555 5555 5555</p>
+          </div>
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '378282224631005')" title="Clic para copiar el número">
+            <h3><span class="ic">A</span> American Express</h3>
+            <p class="numTarjeta">3782 822246 31005</p>
+          </div>
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '6011111111111111')" title="Clic para copiar el número">
+            <h3><span class="ic">D</span> Discover</h3>
+            <p class="numTarjeta">6011 1111 1111 1111</p>
+          </div>
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '3530111111111111')" title="Clic para copiar el número">
+            <h3><span class="ic">J</span> JCB</h3>
+            <p class="numTarjeta">3530 1111 1111 1111</p>
+          </div>
+          <div class="card tarjeta" onclick="matCopiarTarjeta(this, '3011111111111111')" title="Clic para copiar el número">
+            <h3><span class="ic">D</span> Diners Club</h3>
+            <p class="numTarjeta">3011 1111 1111 111</p>
+          </div>
+        </div>
+      </section>
 
       <div class="footer">
         <span>Dev. By Ing. Eder Montes 2026</span>
