@@ -4,7 +4,26 @@
 (function () {
   const HASH = 'c1541cdc6a01b6b79cd54d2493ee59105c7e4b2c633397a952ef635ae6ae2af8';
   const LLAVE = 'qa_docs_acceso_v1';
-  try { if (localStorage.getItem(LLAVE) === HASH) return; } catch (e) { return; }
+
+  // Botón «Salir»: borra el acceso de este navegador y vuelve a pedir la clave.
+  function montarSalir() {
+    const lado = document.querySelector('.doc-side');
+    if (!lado || document.getElementById('candado-salir')) return;
+    const b = document.createElement('button');
+    b.id = 'candado-salir';
+    b.textContent = '⎋ Salir';
+    b.title = 'Cierra el acceso en este navegador: la próxima visita pedirá la contraseña';
+    b.onclick = () => { try { localStorage.removeItem(LLAVE); } catch (_) { } location.reload(); };
+    lado.appendChild(b);
+  }
+
+  let autorizado = false;
+  try { autorizado = localStorage.getItem(LLAVE) === HASH; } catch (e) { return; }
+  if (autorizado) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montarSalir);
+    else montarSalir();
+    return;
+  }
 
   document.documentElement.classList.add('candado');
 
@@ -33,6 +52,7 @@
         try { localStorage.setItem(LLAVE, HASH); } catch (_) { }
         document.documentElement.classList.remove('candado');
         o.remove();
+        montarSalir();
       } else {
         document.getElementById('candado-error').textContent = 'Contraseña incorrecta';
         campo.value = '';

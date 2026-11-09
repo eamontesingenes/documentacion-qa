@@ -273,3 +273,10 @@ html.candado .doc-wrap{display:none}
 .micFichaDatos a{color:var(--acento-ink);font-weight:650;text-decoration:none;
   border-bottom:1px dotted var(--acento-ink)}
 .micFichaDatos a:hover{color:var(--acento);border-bottom-style:solid}
+
+/* botón salir del candado (sidebar) */
+#candado-salir{display:block;width:100%;margin-top:22px;padding:9px 12px;
+  border-radius:9px;border:1px dashed rgba(255,255,255,.25);background:none;
+  color:#9db4d6;font-family:var(--sans);font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:.15s;text-align:center}
+#candado-salir:hover{border-color:#fff;color:#fff;background:rgba(255,255,255,.07)}
