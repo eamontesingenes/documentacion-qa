@@ -1,6 +1,6 @@
-// Matrices IC por unidad de negocio — SOLO VISUALIZACIÓN (los QA no editan
-// aquí): la matriz se exporta a Excel y se trabaja allá. Dev. By Ing. Eder
-// Montes 2026.
+// Matriz IC (Fertilidad / Subrogado) — prototipo visual: el diseño NO se edita
+// aquí; el estado SÍ se cicla (se guarda solo en el navegador de cada QA) y
+// viaja al Excel exportado. Dev. By Ing. Eder Montes 2026.
 const MATRIZ_IC_BASE = [
   { nombre: 'Interfaz y Unitarias', puntos: [
     'Test Ancla (Caminos felices)',
@@ -49,20 +49,50 @@ const MATRIZ_IC_BASE = [
   ]},
 ];
 
-const MATRICES_UNIDADES = ['Fertilidad', 'Subrogado'];
+const MATRICES_UNIDADES = ['Fertilidad / Subrogado'];
 let matUnidadActiva = MATRICES_UNIDADES[0];
+
+// Ficha de la matriz: se pinta arriba y encabeza el Excel exportado.
+const MAT_FICHA = {
+  titulo: 'Matriz de Cobertura',
+  url: 'onboarding-tawny-kappa.vercel.app',
+  tester: 'Eder Montes',
+  pm: 'Pedro Andonegui',
+};
+
+// Estados marcados en ESTE navegador (prototipo visual): no se comparten
+// entre QAs ni editan la matriz — solo pintan y viajan al Excel exportado.
+let matEstados = {};
+try { matEstados = JSON.parse(localStorage.getItem('qa_mat_web_estados_v1') || '{}'); } catch (e) { matEstados = {}; }
+const MAT_PUNTAJE = {
+  3: { etiqueta: 'OK', color: '#1e8449' },
+  2: { etiqueta: 'WARN', color: '#c9a227' },
+  1: { etiqueta: 'FAIL', color: '#c0392b' },
+};
+function matCiclarEstado(codigo) {
+  const cur = matEstados[codigo];
+  const sig = cur === 3 ? 2 : cur === 2 ? 1 : cur === 1 ? null : 3;
+  if (sig === null) delete matEstados[codigo]; else matEstados[codigo] = sig;
+  try { localStorage.setItem('qa_mat_web_estados_v1', JSON.stringify(matEstados)); } catch (e) { }
+  matRender();
+}
+function matChipHtml(codigo) {
+  const regla = MAT_PUNTAJE[matEstados[codigo]];
+  const clic = `onclick="matCiclarEstado('${codigo}')" role="button"`;
+  if (!regla) return '<span class="micChip micChipClic" ' + clic + ' title="Clic para ciclar OK → WARN → FAIL → sin probar (se guarda solo en tu navegador)">—</span>';
+  return '<span class="micChip micChipClic" ' + clic + ' style="color:#fff;background:' + regla.color + ';border:1px solid ' + regla.color + ';" title="Clic para ciclar OK → WARN → FAIL → sin probar">' + regla.etiqueta + '</span>';
+}
 
 const matEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const matLetra = (i) => String.fromCharCode(65 + i);
 
 function matSeccionHtml(sec, si) {
   const letra = matLetra(si);
-  const chip = '<span class="micChip" title="Sin probar: aquí solo se visualiza; el estado se llena en el Excel">—</span>';
   const filas = sec.puntos.map((p, pi) => `
       <tr>
         <td class="micCod">${letra}${pi + 1}</td>
         <td class="micPunto">${matEsc(p)}</td>
-        <td class="micEstado">${chip}</td>
+        <td class="micEstado">${matChipHtml(letra + (pi + 1))}</td>
         <td class="micObs">—</td>
       </tr>`).join('');
   return `
@@ -89,11 +119,19 @@ function matRender() {
   const tabs = MATRICES_UNIDADES.map((u) =>
     `<button class="tabU${u === matUnidadActiva ? ' on' : ''}" onclick="matCambiarUnidad('${u}')">${matEsc(u)}</button>`).join('');
   cont.innerHTML = `
+    <div class="micFicha">
+      <h3>${matEsc(MAT_FICHA.titulo)}</h3>
+      <div class="micFichaDatos">
+        <span><b>URL a probar:</b> <a href="https://${matEsc(MAT_FICHA.url)}" target="_blank" rel="noopener">${matEsc(MAT_FICHA.url)}</a></span>
+        <span><b>Tester:</b> ${matEsc(MAT_FICHA.tester)}</span>
+        <span><b>PM:</b> ${matEsc(MAT_FICHA.pm)}</span>
+      </div>
+    </div>
     <div class="micBarra">
       ${tabs}
       <div style="flex:1;"></div>
       <button class="btnZip" style="margin-top:0;" onclick="matExportarExcel()">⬇ Exportar a Excel
-        <small>Matriz_IC_${matEsc(matUnidadActiva)}.xlsx</small></button>
+        <small>Matriz_IC_Fertilidad_Subrogado.xlsx · con tus estados marcados</small></button>
     </div>
     ${MATRIZ_IC_BASE.map((s, i) => matSeccionHtml(s, i)).join('')}`;
 }
@@ -104,18 +142,27 @@ function matCambiarUnidad(u) {
 }
 
 function matExportarExcel() {
-  const filas = [['Sección', 'Código', 'Punto a validar', 'Estado', 'Observaciones']];
+  const filas = [
+    [MAT_FICHA.titulo],
+    ['URL a probar', MAT_FICHA.url],
+    ['Tester', MAT_FICHA.tester],
+    ['PM', MAT_FICHA.pm],
+    [],
+    ['Sección', 'Código', 'Punto a validar', 'Estado', 'Observaciones'],
+  ];
   MATRIZ_IC_BASE.forEach((sec, si) => {
     const letra = matLetra(si);
     sec.puntos.forEach((p, pi) => {
-      filas.push([sec.nombre, `${letra}${pi + 1}`, p, '', '']);
+      const cod = letra + (pi + 1);
+      const regla = MAT_PUNTAJE[matEstados[cod]];
+      filas.push([sec.nombre, cod, p, regla ? regla.etiqueta : '', '']);
     });
   });
   const hoja = XLSX.utils.aoa_to_sheet(filas);
   hoja['!cols'] = [{ wch: 26 }, { wch: 8 }, { wch: 70 }, { wch: 10 }, { wch: 45 }];
   const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, matUnidadActiva.slice(0, 31));
-  XLSX.writeFile(libro, `Matriz_IC_${matUnidadActiva}.xlsx`);
+  XLSX.utils.book_append_sheet(libro, hoja, 'Fertilidad y Subrogado');
+  XLSX.writeFile(libro, 'Matriz_IC_Fertilidad_Subrogado.xlsx');
 }
 
 document.addEventListener('DOMContentLoaded', matRender);

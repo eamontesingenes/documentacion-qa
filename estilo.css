@@ -258,3 +258,18 @@ html.candado .doc-wrap{display:none}
   font-family:var(--sans);transition:.15s}
 #candado-form button:hover{filter:brightness(1.1)}
 #candado-error{color:#ffa3a3;font-size:12px;min-height:15px;font-style:normal}
+
+/* chip de estado ciclable en la web */
+.micChipClic{cursor:pointer;user-select:none}
+.micChipClic:hover{filter:brightness(1.08)}
+
+/* ---- Ficha de la matriz de cobertura ---- */
+.micFicha{background:var(--panel);border:1px solid var(--borde);border-radius:12px;
+  padding:16px 18px;margin-bottom:16px;box-shadow:var(--sombra);
+  border-left:4px solid var(--acento)}
+.micFicha h3{font-size:18px;font-weight:800;letter-spacing:-.2px;color:var(--ink);margin-bottom:8px}
+.micFichaDatos{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--ink-tenue)}
+.micFichaDatos b{color:var(--ink);font-weight:650}
+.micFichaDatos a{color:var(--acento-ink);font-weight:650;text-decoration:none;
+  border-bottom:1px dotted var(--acento-ink)}
+.micFichaDatos a:hover{color:var(--acento);border-bottom-style:solid}
