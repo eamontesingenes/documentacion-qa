@@ -25,13 +25,12 @@
     <a class="doc-spec" href="digital.html" style="margin-top:8px">OB Digital Unificado
       <small>Onboarding digital · 24 pantallas</small></a>
     <a class="doc-spec" href="vertical.html" style="margin-top:8px">OB Unificado Vertical
-      <small>Formulario interno · bloques por etapa</small></a>
+      <small>Formulario interno · llenado completo</small></a>
 
     <div class="seccTitle">En esta página</div>
     <ul class="doc-toc">
       <li><a href="#que-es"><span class="n">—</span> Qué es el paquete</a></li>
       <li><a href="#specs"><span class="n">—</span> Los dos specs</a></li>
-      <li><a href="#contenido"><span class="n">—</span> Qué trae la carpeta</a></li>
       <li><a href="#correr"><span class="n">—</span> Cómo se corre</a></li>
       <li><a href="#problemas"><span class="n">—</span> Problemas comunes</a></li>
     </ul>
@@ -103,47 +102,10 @@
           <a class="card" href="vertical.html">
             <h3><span class="ic">V</span> OB Unificado Vertical</h3>
             <p>El formulario interno de los agentes: <b>una sola página de bloques</b> que se
-              destapan por condición. El spec los llena por etapas (filiación → cuestionario →
-              guardar caso → agenda).</p>
-            <p class="ir">Ver el llenado bloque por bloque →</p>
+              destapan por condición. El spec llena la página completa, de arriba
+              abajo: filiación, cuestionario, guardar caso y agenda.</p>
+            <p class="ir">Ver el llenado pregunta por pregunta →</p>
           </a>
-        </div>
-      </section>
-
-      <!-- ===== CONTENIDO ===== -->
-      <section id="contenido">
-        <div class="secHead"><span class="bar"></span><h2>Qué trae la carpeta</h2></div>
-        <p class="secIntro">Todo lo que sigue vive dentro de la carpeta del paquete — la que tiene
-          el <code>README.md</code>, el <code>package.json</code> y los <code>.spec.js</code>.</p>
-
-        <div class="grid">
-          <div class="card">
-            <h3><span class="ic">◆</span> Los specs</h3>
-            <p><code>ingenes_OB_Digital_Unificado.spec.js</code> y
-              <code>ingenes_OB_Unificado_Vertical.spec.js</code>. Son los archivos que se corren
-              con Playwright.</p>
-          </div>
-          <div class="card">
-            <h3><span class="ic">◆</span> matrices/</h3>
-            <p>Viene vacía: aquí se copia el <b>.xlsm</b> que comparte el QA líder, sin cambiarle
-              el nombre. Sin matriz no hay casos que correr.</p>
-          </div>
-          <div class="card">
-            <h3><span class="ic">◆</span> correos.txt</h3>
-            <p>La lista de casos a correr, un caso por renglón: un número (<code>7</code>), un
-              rango (<code>20-25</code>) o el correo completo.</p>
-          </div>
-          <div class="card">
-            <h3><span class="ic">◆</span> helpers/</h3>
-            <p><code>cargarEscenariosBeta.js</code> arma el escenario leyendo la matriz por correo.
-              <code>traductorObd.js</code> + <code>_obd_i18n.json</code> son el modo inglés del
-              Digital: traducen con el diccionario del producto.</p>
-          </div>
-          <div class="card">
-            <h3><span class="ic">◆</span> vendor/ y package.json</h3>
-            <p>Las dependencias del paquete. Se instalan una sola vez con
-              <code>npm install</code>.</p>
-          </div>
         </div>
       </section>
 

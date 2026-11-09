@@ -25,7 +25,7 @@
     <a class="doc-spec" href="digital.html" style="margin-top:8px">OB Digital Unificado
       <small>Onboarding digital · 24 pantallas</small></a>
     <a class="doc-spec on" href="#top" style="margin-top:8px">OB Unificado Vertical
-      <small>Formulario interno · bloques por etapa</small></a>
+      <small>Formulario interno · llenado completo</small></a>
 
     <div class="seccTitle">En este spec</div>
     <ul class="doc-toc">
@@ -68,14 +68,14 @@
     <header class="doc-head">
       <div class="eyebrow"><span class="dot"></span> Documentación técnica · Spec</div>
       <h1>OB Unificado Vertical</h1>
-      <p class="lede">Qué hace la prueba en el formulario interno (vertical) de los agentes, bloque
-        por bloque y en el orden real del llenado. A diferencia del Digital, aquí no hay pantallas:
+      <p class="lede">Qué hace la prueba en el formulario interno (vertical) de los agentes, pregunta
+        por pregunta y en el orden real del llenado. A diferencia del Digital, aquí no hay pantallas:
         es una sola página con todas las preguntas, que se van destapando según las respuestas, y
-        la prueba la recorre en cuatro etapas.</p>
+        la prueba la llena completa, de arriba abajo.</p>
       <div class="metarow">
         <span class="pill"><b>Archivo:</b> ingenes_OB_Unificado_Vertical.spec.js</span>
         <span class="pill"><b>Formulario:</b> una sola página de preguntas</span>
-        <span class="pill"><b>Etapas:</b> filiación → cuestionario → guardar caso → agenda</span>
+        <span class="pill"><b>Orden:</b> filiación → cuestionario → guardar caso → agenda</span>
       </div>
     </header>
 
@@ -134,16 +134,16 @@
 
       <!-- ===== EL LLENADO ===== -->
       <section id="recorrido">
-        <div class="secHead"><span class="bar"></span><h2>El llenado, bloque por bloque</h2></div>
+        <div class="secHead"><span class="bar"></span><h2>El llenado, pregunta por pregunta</h2></div>
         <p class="secIntro">En el orden en que la prueba los llena. Cada uno dice qué dato del caso se decide ahí
-          y cómo se contesta. Los separadores marcan las etapas. En los fragmentos,
+          y cómo se contesta. Los separadores marcan las partes del formulario. En los fragmentos,
           <code>escenario</code> es el renglón del caso leído del Excel:
           <code>escenario.objetivo</code> es la celda de la columna «objetivo» de ese renglón,
           <code>escenario.sucursal</code> la de «sucursal», y así con cada campo.
           <code>traducir()</code> convierte lo que dice la celda al texto exacto de la opción en
           el formulario.</p>
 
-        <div class="etapaHead"><span class="et">Etapa 1 · Filiación</span><span class="linea"></span></div>
+        <div class="etapaHead"><span class="et">Filiación</span><span class="linea"></span></div>
 
         <div class="steps">
 
@@ -157,7 +157,7 @@
                 materno no viene</b> y se llena con «QA» (o lo que traiga la columna si existe).</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 1</span><span>name · apellido · apellidoMaterno</span></figcaption>
+                <figcaption><span class="f">filiación</span><span>name · apellido · apellidoMaterno</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'name'</span>, <span class="st">'nombre'</span>, escenario.nombre);
 <span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellido'</span>, <span class="st">'apellido'</span>, escenario.apellido);
 <span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellidoMaterno'</span>, <span class="st">'apellido_materno'</span>, ... || <span class="st">'QA'</span>);</pre>
@@ -188,7 +188,7 @@
                 <b>teléfono validado</b> si existe.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 1 · teléfono</span><span>lada → teléfono → casilla</span></figcaption>
+                <figcaption><span class="f">filiación · teléfono</span><span>lada → teléfono → casilla</span></figcaption>
 <pre><span class="kw">if</span> (lada &amp;&amp; !<span class="rx">/mexico|mx|\+?52/i</span>.<span class="fn">test</span>(lada)) {
   <span class="cm">// select: empareja la opción por texto o por dígitos (+1, +34…)</span>
   <span class="cm">// buscador: teclea el país y pulsa la opción que coincide</span>
@@ -201,7 +201,7 @@
 
         </div>
 
-        <div class="etapaHead"><span class="et">Etapa 2 · Cuestionario</span><span class="linea"></span></div>
+        <div class="etapaHead"><span class="et">Cuestionario</span><span class="linea"></span></div>
 
         <div class="steps" style="counter-reset:paso 3">
 
@@ -215,7 +215,7 @@
                 abre el cuestionario.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>need</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>need</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'need'</span>, <span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'need'</span>, escenario.objetivo || <span class="st">'bebe'</span>), ...);</pre>
               </figure>
             </div>
@@ -232,7 +232,7 @@
                 estado civil, edad de la pareja, hijos espejo y filiación de la pareja.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>sex · partner</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>sex · partner</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sex'</span>, <span class="st">'sexo'</span>, <span class="fn">traducir</span>(<span class="st">'sex'</span>, escenario.sexo), ...);
 <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'partner'</span>, <span class="st">'pareja'</span>, <span class="fn">traducir</span>(<span class="st">'partner'</span>, escenario.pareja || <span class="st">'Sin pareja'</span>), ...);</pre>
               </figure>
@@ -270,7 +270,7 @@
                 de la matriz (espejo): no hay columna aparte para los hijos de la pareja.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>hijosSelf · hijosPartner (espejo)</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>hijosSelf · hijosPartner (espejo)</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosSelf'</span>, <span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, escenario.hijos ?? <span class="nu">0</span>), ...);
 <span class="cm">// [espejo] hijosPartner repite la columna `hijos` de la matriz</span>
 <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosPartner'</span>, <span class="st">'hijos (pareja, espejo)'</span>, ...);</pre>
@@ -325,7 +325,7 @@
                 aleatoria del catálogo (regla del QA: que no quede vacío).</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>productos · prodOther</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>productos · prodOther</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">opcionMulti</span>(<span class="st">'productos'</span>, <span class="st">'productos'</span>, <span class="st">'No / No lo se'</span>);
 <span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'prodOther'</span>, <span class="st">'prodOther'</span>, <span class="fn">fraseProductoQA</span>());  <span class="cm">// aleatoria, se anota</span></pre>
               </figure>
@@ -354,7 +354,7 @@
                 formulario destapa «¿cuántos ciclos?», responde «1 ciclo».</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>txPrevios · ciclos</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>txPrevios · ciclos</span></figcaption>
 <pre><span class="kw">if</span> (codigoTx === <span class="st">'4'</span>) <span class="cm">// Cirugias no existe aqui -> Ninguno (avisado)</span>
 <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'txPrevios'</span>, <span class="st">'tratamientos'</span>, <span class="fn">traducir</span>(<span class="st">'txPrevios'</span>, codigoTx), ...);
 <span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'ciclos'</span>)) <span class="fn">opcion</span>(<span class="st">'ciclos'</span>, <span class="st">'ciclos'</span>, <span class="st">'1 ciclo'</span>);</pre>
@@ -384,7 +384,7 @@
                 y anota cuál tocó.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>abierta (matriz o aleatoria)</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>abierta (matriz o aleatoria)</span></figcaption>
 <pre><span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();  <span class="cm">// escenario.abierta, o aleatoria por nivel de intención</span>
 <span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'abierta'</span>, <span class="st">'abierta'</span>, historia, <span class="st">'textarea'</span>);</pre>
               </figure>
@@ -417,7 +417,7 @@
                 final de la corrida se verifica que no haya quedado vacío.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>country → camino (derivado) → cp</span></figcaption>
+                <figcaption><span class="f">cuestionario</span><span>country → camino (derivado) → cp</span></figcaption>
 <pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'country'</span>, <span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'country'</span>, escenario.pais || <span class="st">'Mexico'</span>), ...);
 <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'camino'</span>, haySucursal ? <span class="st">'En una sucursal'</span> : <span class="st">'Necesito orientacion'</span>);
 <span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'cp'</span>, <span class="st">'cp'</span>, cpEsperado))) { <span class="cm">// reintento: se monta tarde</span> }</pre>
@@ -437,7 +437,7 @@
                 agenda queda bloqueada hasta que el QA decida.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 2 · sucursal</span><span>select por catálogo</span></figcaption>
+                <figcaption><span class="f">cuestionario · sucursal</span><span>select por catálogo</span></figcaption>
 <pre><span class="kw">const</span> op = opciones.<span class="fn">find</span>((o) =&gt; <span class="fn">sinAcentos</span>(o.texto).<span class="fn">includes</span>(<span class="fn">sinAcentos</span>(sucursalBuscada)));
 <span class="kw">if</span> (op) <span class="kw">await</span> sel.<span class="fn">selectOption</span>(op.value);
 <span class="cm">// sin sucursal en el escenario: NO se elige (la decide el QA)</span></pre>
@@ -447,7 +447,7 @@
 
         </div>
 
-        <div class="etapaHead"><span class="et">Etapa 3 · Guardar caso y cierre del lead</span><span class="linea"></span></div>
+        <div class="etapaHead"><span class="et">Guardar caso y cierre del lead</span><span class="linea"></span></div>
 
         <div class="steps" style="counter-reset:paso 19">
 
@@ -464,7 +464,7 @@
                 y continuar.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 3</span><span>guardar caso + dedupe</span></figcaption>
+                <figcaption><span class="f">guardar caso</span><span>guardar caso + dedupe</span></figcaption>
 <pre><span class="kw">await</span> boton.<span class="fn">click</span>();                 <span class="cm">// «Guardar caso»: destapa Lead Completo</span>
 <span class="kw">await</span> <span class="fn">manejarDedupeTrasGuardar</span>();    <span class="cm">// caso existente: clic en la tarjeta Infunnel</span></pre>
               </figure>
@@ -512,7 +512,7 @@
 
         </div>
 
-        <div class="etapaHead"><span class="et">Etapa 4 · Agenda y filiación clínica</span><span class="linea"></span></div>
+        <div class="etapaHead"><span class="et">Agenda y filiación clínica</span><span class="linea"></span></div>
 
         <div class="steps" style="counter-reset:paso 23">
 
@@ -538,7 +538,7 @@
                 coincide con la del cuestionario.</p>
             
               <figure class="code">
-                <figcaption><span class="f">etapa 4</span><span>filSelf — fecha desde la edad</span></figcaption>
+                <figcaption><span class="f">agenda</span><span>filSelf — fecha desde la edad</span></figcaption>
 <pre><span class="kw">const</span> f = <span class="fn">fechaDesdeEdad</span>(escenario.edad_usuario);  <span class="cm">// 01/01/(año − edad)</span>
 <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(escenario.nombre);
 <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">3</span>).<span class="fn">fill</span>(f.dia); ... f.mes ... f.anio;</pre>
