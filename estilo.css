@@ -201,3 +201,8 @@ html,body{margin:0;padding:0;background:var(--fondo)}
   transition:.15s}
 .btnZip:hover{filter:brightness(1.08);transform:translateY(-1px)}
 .btnZip small{font-weight:500;opacity:.85}
+
+/* ---- Ligas dentro del contenido ---- */
+.doc-body p a, .doc-body .nota a, .doc-body li a{color:var(--acento-ink);
+  font-weight:650;text-decoration:none;border-bottom:1px dotted var(--acento-ink)}
+.doc-body p a:hover, .doc-body .nota a:hover, .doc-body li a:hover{color:var(--acento);border-bottom-style:solid}
