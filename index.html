@@ -60,8 +60,7 @@
         <div class="secHead"><span class="bar"></span><h2>Qué es el paquete</h2></div>
         <p class="secIntro">Una carpeta auto-contenida con dos specs de Playwright y sus ayudantes.
           Se corre con los casos de la matriz que comparte el QA líder, abre el navegador y
-          <b>el formulario se llena solo</b>. El paquete <b>solo llena</b>: no extrae evidencia ni
-          evalúa resultados — eso lo hace el QA líder en su equipo.</p>
+          <b>el formulario se llena solo</b>.</p>
 
         <div class="grid">
           <div class="card">
@@ -140,11 +139,6 @@
             <h3><span class="ic">◆</span> vendor/ y package.json</h3>
             <p>Las dependencias del paquete. Se instalan una sola vez con
               <code>npm install</code>.</p>
-          </div>
-          <div class="card">
-            <h3><span class="ic">◆</span> Lo que NO trae</h3>
-            <p>Extracción de evidencia (Kafka, Inconcert), evaluador y reportes: en el paquete esas
-              llamadas están <b>vacías a propósito</b>. El spec solo avisa «Llenado terminado».</p>
           </div>
         </div>
       </section>
