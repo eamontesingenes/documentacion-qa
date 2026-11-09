@@ -65,13 +65,16 @@ const MAT_FICHA = {
 let matEstados = {};
 try { matEstados = JSON.parse(localStorage.getItem('qa_mat_web_estados_v1') || '{}'); } catch (e) { matEstados = {}; }
 const MAT_PUNTAJE = {
-  3: { etiqueta: 'OK', color: '#1e8449' },
-  2: { etiqueta: 'WARN', color: '#c9a227' },
-  1: { etiqueta: 'FAIL', color: '#c0392b' },
+  3: { etiqueta: 'OK', excel: 'OK', color: '#1e8449' },
+  2: { etiqueta: 'WARN', excel: 'WARN', color: '#c9a227' },
+  1: { etiqueta: 'FAIL', excel: 'FAIL', color: '#c0392b' },
+  0: { etiqueta: 'NA', excel: 'NA', color: '#b0b7bd' },
+  4: { etiqueta: 'Pendiente', excel: 'Pendiente por probar', color: '#2f7fd1' },
 };
+const MAT_CICLO = { 3: 2, 2: 1, 1: 0, 0: 4, 4: null };
 function matCiclarEstado(codigo) {
   const cur = matEstados[codigo];
-  const sig = cur === 3 ? 2 : cur === 2 ? 1 : cur === 1 ? null : 3;
+  const sig = cur in MAT_CICLO ? MAT_CICLO[cur] : 3;
   if (sig === null) delete matEstados[codigo]; else matEstados[codigo] = sig;
   try { localStorage.setItem('qa_mat_web_estados_v1', JSON.stringify(matEstados)); } catch (e) { }
   matRender();
@@ -79,8 +82,9 @@ function matCiclarEstado(codigo) {
 function matChipHtml(codigo) {
   const regla = MAT_PUNTAJE[matEstados[codigo]];
   const clic = `onclick="matCiclarEstado('${codigo}')" role="button"`;
-  if (!regla) return '<span class="micChip micChipClic" ' + clic + ' title="Clic para ciclar OK → WARN → FAIL → sin probar (se guarda solo en tu navegador)">—</span>';
-  return '<span class="micChip micChipClic" ' + clic + ' style="color:#fff;background:' + regla.color + ';border:1px solid ' + regla.color + ';" title="Clic para ciclar OK → WARN → FAIL → sin probar">' + regla.etiqueta + '</span>';
+  const ciclo = 'Clic para ciclar OK → WARN → FAIL → NA → Pendiente → sin probar (se guarda solo en tu navegador)';
+  if (!regla) return '<span class="micChip micChipClic" ' + clic + ' title="' + ciclo + '">—</span>';
+  return '<span class="micChip micChipClic" ' + clic + ' style="color:#fff;background:' + regla.color + ';border:1px solid ' + regla.color + ';" title="' + ciclo + '">' + regla.etiqueta + '</span>';
 }
 
 const matEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -195,14 +199,14 @@ function matArmarLibro() {
       const r = ws.getRow(fila);
       r.getCell(1).value = cod;
       r.getCell(2).value = p;
-      r.getCell(3).value = regla ? regla.etiqueta : '';
+      r.getCell(3).value = regla ? regla.excel : '';
       for (let c = 1; c <= 4; c++) r.getCell(c).border = bordes;
       r.getCell(1).font = { size: 10, color: { argb: 'FF8A929A' } };
       r.getCell(2).alignment = { wrapText: true };
       r.getCell(3).alignment = { horizontal: 'center' };
       r.getCell(3).dataValidation = {
-        type: 'list', allowBlank: true, formulae: ['"OK,WARN,FAIL"'],
-        showErrorMessage: true, errorTitle: 'Estado', error: 'Elige OK, WARN o FAIL',
+        type: 'list', allowBlank: true, formulae: ['"OK,WARN,FAIL,NA,Pendiente por probar"'],
+        showErrorMessage: true, errorTitle: 'Estado', error: 'Elige OK, WARN, FAIL, NA o Pendiente por probar',
       };
       fila++;
     });
@@ -215,9 +219,11 @@ function matArmarLibro() {
   ws.addConditionalFormatting({
     ref: `C7:C${fila - 1}`,
     rules: [
-      { type: 'containsText', operator: 'containsText', text: 'OK', priority: 1, style: estiloCF('FFD9EAD3', 'FF1E8449') },
-      { type: 'containsText', operator: 'containsText', text: 'WARN', priority: 2, style: estiloCF('FFFCF3CF', 'FF9A6512') },
-      { type: 'containsText', operator: 'containsText', text: 'FAIL', priority: 3, style: estiloCF('FFF5D6D1', 'FFC0392B') },
+      { type: 'containsText', operator: 'containsText', text: 'Pendiente', priority: 1, style: estiloCF('FFD6E4F7', 'FF1F5FA0') },
+      { type: 'containsText', operator: 'containsText', text: 'NA', priority: 2, style: estiloCF('FFE8EAED', 'FF6E7987') },
+      { type: 'containsText', operator: 'containsText', text: 'OK', priority: 3, style: estiloCF('FFD9EAD3', 'FF1E8449') },
+      { type: 'containsText', operator: 'containsText', text: 'WARN', priority: 4, style: estiloCF('FFFCF3CF', 'FF9A6512') },
+      { type: 'containsText', operator: 'containsText', text: 'FAIL', priority: 5, style: estiloCF('FFF5D6D1', 'FFC0392B') },
     ],
   });
   return wb;
