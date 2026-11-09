@@ -234,3 +234,27 @@ html,body{margin:0;padding:0;background:var(--fondo)}
 .micChip{display:inline-block;min-width:50px;text-align:center;padding:3px 9px;
   border-radius:10px;font-size:11px;font-weight:700;color:var(--ink-debil);
   background:var(--panel);border:1px dashed var(--borde)}
+
+/* ---- Candado de acceso ---- */
+html.candado .doc-wrap{display:none}
+#candado-overlay{position:fixed;inset:0;z-index:999;display:grid;place-items:center;
+  background:radial-gradient(120% 140% at 20% 0%, #27477e, var(--navy-900))}
+#candado-form{display:flex;flex-direction:column;gap:9px;align-items:center;
+  width:min(330px,88vw);padding:36px 38px;border-radius:16px;font-family:var(--sans);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 20px 60px -20px rgba(0,0,0,.55)}
+#candado-form .candado-glyph{width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(145deg,#3f7fd1,#1f3864);display:grid;place-items:center;
+  font-weight:800;color:#fff;font-size:21px;font-family:var(--sans);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+#candado-form b{color:#fff;font-size:17px;letter-spacing:.2px}
+#candado-form span{color:#9db4d6;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+#candado-form input{width:100%;margin-top:12px;padding:11px 12px;border-radius:9px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.09);color:#fff;
+  font-size:14.5px;text-align:center;font-family:var(--sans);outline:none}
+#candado-form input:focus{border-color:var(--acento)}
+#candado-form button{width:100%;padding:11px;border:none;border-radius:9px;
+  background:var(--acento);color:#fff;font-weight:700;font-size:14.5px;cursor:pointer;
+  font-family:var(--sans);transition:.15s}
+#candado-form button:hover{filter:brightness(1.1)}
+#candado-error{color:#ffa3a3;font-size:12px;min-height:15px;font-style:normal}
