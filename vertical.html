@@ -140,10 +140,10 @@
               formulario.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">◆</span> Cortes de etapa</h3>
-            <p>El llenado está ordenado en etapas con cortes: <b>Pre-lead</b> (tras la filiación),
-              <b>Lead</b> (tras la sucursal) y <b>Lead Completo</b> (tras «conociste»). La corrida
-              va de corrido, de la primera etapa a la última.</p>
+            <h3><span class="ic">◆</span> Orden por etapas</h3>
+            <p>El llenado está ordenado en cuatro etapas: la <b>filiación</b>, el
+              <b>cuestionario</b>, el <b>cierre del lead</b> (guardar caso, recomendación) y la
+              <b>agenda</b>. La corrida va de corrido, de la primera a la última.</p>
           </div>
           <div class="card">
             <h3><span class="ic">◆</span> Dedupe (caso existente)</h3>
@@ -164,7 +164,7 @@
       <section id="recorrido">
         <div class="secHead"><span class="bar"></span><h2>El llenado, bloque por bloque</h2></div>
         <p class="secIntro">En el orden en que el spec los llena. Cada bloque muestra qué decide
-          del lead y el fragmento que lo controla. Los separadores marcan las etapas y sus cortes.</p>
+          del lead y el fragmento que lo controla. Los separadores marcan las etapas.</p>
 
         <div class="etapaHead"><span class="et">Etapa 1 · Filiación</span><span class="linea"></span></div>
 
@@ -208,7 +208,6 @@
                 buscador de ladas, según qué control monte el producto); si es MX o no viene, se
                 queda el default +52. Luego escribe el teléfono y marca la casilla de
                 <b>teléfono validado</b> si existe.</p>
-              <div class="corteTag">⏸ Corte de etapa · <b>Pre-lead</b> termina aquí</div>
               <figure class="code">
                 <figcaption><span class="f">etapa 1 · teléfono</span><span>lada → teléfono → casilla</span></figcaption>
 <pre><span class="kw">if</span> (lada &amp;&amp; !<span class="rx">/mexico|mx|\+?52/i</span>.<span class="fn">test</span>(lada)) {
@@ -450,7 +449,6 @@
                 (Irvine/Orange County → «Orange County», Houston → «Houston», «mexico» a secas →
                 «Ciudad de México»). Si el escenario <b>no trae sucursal, no se elige nada</b>: la
                 agenda queda bloqueada hasta que el QA decida.</p>
-              <div class="corteTag">⏸ Corte de etapa · <b>Lead</b> termina aquí</div>
               <figure class="code">
                 <figcaption><span class="f">etapa 2 · sucursal</span><span>select por catálogo</span></figcaption>
 <pre><span class="kw">const</span> op = opciones.<span class="fn">find</span>((o) =&gt; <span class="fn">sinAcentos</span>(o.texto).<span class="fn">includes</span>(<span class="fn">sinAcentos</span>(sucursalBuscada)));
@@ -522,7 +520,6 @@
                 Solo aplica a quien <b>no</b> llegó recomendado; en la matriz, «Otro» equivale a
                 «no recomendado» y se anota sin contestar. Un canal sin opción propia aquí (no hay
                 «Otro» en este formulario) cae en Google, avisándolo.</p>
-              <div class="corteTag">⏸ Corte de etapa · <b>Lead Completo</b> termina aquí</div>
             </div>
           </article>
 

@@ -131,9 +131,10 @@
               esperaba la matriz. Es como se cargan nombre, correo y teléfono.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">◆</span> Etapas (cortes)</h3>
-            <p>El spec puede detenerse en <b>Lead</b> (tras contacto), <b>Lead Avanzado</b> (OTP tecleado)
-              o <b>Lead Completo</b> (OTP verificado), para probar hasta cierto punto del lead.</p>
+            <h3><span class="ic">◆</span> Modo inglés</h3>
+            <p>Con <code>QA_OBD_IDIOMA=en</code> el spec abre el formulario en <code>/en</code> y
+              traduce las respuestas en la frontera con el <b>diccionario del producto</b>
+              (<code>helpers/traductorObd.js</code>). Sin la variable, corre en español.</p>
           </div>
           <div class="card">
             <h3><span class="ic">◆</span> Si se atora</h3>
@@ -409,7 +410,6 @@
               <p>Los <b>datos de contacto</b>: nombre, apellido paterno, apellido materno (fijo «QA»),
                 correo, la <b>lada</b> —que define el país del teléfono— y el teléfono. El spec avisa si el
                 teléfono no trae 10 dígitos: sin eso el producto no deja pasar de esta pantalla.</p>
-              <div class="corteTag">⏹ Corte de etapa · <b>Lead</b> termina aquí</div>
               <figure class="code">
                 <figcaption><span class="f">PANTALLAS · contacto</span><span>nombre · correo · lada · teléfono</span></figcaption>
 <pre>clave: <span class="rx">/datos de contacto|revise tu caso|para seguir en contacto/</span>,
@@ -548,26 +548,23 @@
         <div class="secHead"><span class="bar" style="background:var(--corte)"></span><h2>OTP y cierre del llenado</h2></div>
         <p class="secIntro">El código de verificación no es una pantalla más de la lista: el motor lo
           detecta aparte (por el texto «verifica tu…» o por las casillas de un solo dígito) y lo resuelve
-          en dos pasos, que son los dos últimos cortes de etapa.</p>
+          en dos pasos.</p>
         <div class="grid">
           <div class="card">
-            <h3><span class="ic">★</span> Teclear el código <span class="chip corteTag" style="margin:0"></span></h3>
-            <p>Pulsa «Autollenar (pruebas)» si existe, o teclea el código en las casillas. Esto marca el
-              corte <b>Lead Avanzado</b>: el OTP queda puesto pero sin verificar.</p>
+            <h3><span class="ic">★</span> Teclear el código</h3>
+            <p>Pulsa «Autollenar (pruebas)» si existe, o teclea el código en las casillas de un solo
+              dígito.</p>
           </div>
           <div class="card">
             <h3><span class="ic">★</span> Verificar</h3>
-            <p>Pulsa «Verificar». Esto marca <b>Lead Completo</b> y es hasta donde llega el llenado
+            <p>Pulsa «Verificar». Es hasta donde llega el llenado
               automático; de ahí en adelante (cita, calendario) lo toma el QA.</p>
           </div>
         </div>
         <figure class="code">
-          <figcaption><span class="f">el motor · bloque OTP</span><span>Lead Avanzado → Lead Completo</span></figcaption>
+          <figcaption><span class="f">el motor · bloque OTP</span><span>teclear → verificar</span></figcaption>
 <pre><span class="kw">if</span> (<span class="kw">await</span> <span class="fn">llenarOTP</span>()) {            <span class="cm">// teclea / autollena</span>
-  <span class="kw">await</span> <span class="fn">corteDeEtapa</span>(<span class="st">'leadAvanzado'</span>);
-  <span class="kw">if</span> (detenidoEn) <span class="kw">break</span>;          <span class="cm">// se pidió parar aquí</span>
   <span class="kw">await</span> <span class="fn">verificarOTP</span>();            <span class="cm">// pulsa Verificar</span>
-  <span class="kw">await</span> <span class="fn">corteDeEtapa</span>(<span class="st">'leadCompleto'</span>);
   <span class="kw">break</span>;                           <span class="cm">// fin del llenado automático</span>
 }</pre>
         </figure>
