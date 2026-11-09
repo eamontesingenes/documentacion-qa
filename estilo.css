@@ -182,3 +182,11 @@ html,body{margin:0;padding:0;background:var(--fondo)}
 .lista li b{color:var(--ink)}
 .lista li code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);
   padding:1px 5px;border-radius:5px;color:var(--acento-ink)}
+
+/* ---- Descargas (sidebar) ---- */
+.doc-desc summary{list-style:none;cursor:pointer}
+.doc-desc summary::-webkit-details-marker{display:none}
+.doc-desc summary .flecha{float:right;font-size:11px;color:#9db4d6;transition:transform .15s}
+.doc-desc[open] summary .flecha{transform:rotate(90deg)}
+.doc-desc .doc-toc{margin:6px 0 0 6px}
+.doc-desc .doc-toc a .n{min-width:14px}
