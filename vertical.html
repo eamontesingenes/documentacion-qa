@@ -117,13 +117,13 @@
 
         <figure class="code">
                 <figcaption><span class="f">el spec · cómo contesta</span><span>Ctrl+F: const opcion = async</span></figcaption>
-<pre>const opcion = async (id, campo, textoOpcion, esperado = textoOpcion) =&gt; {
-  if (!(await bloqueVisible(id))) {
-    console.log(`      ${id}: el bloque no aparecio (condicion del formulario).`);
-    dato(campo, esperado, '(bloque no aparecio: condicional)');
-    return false;
+<pre><span class="kw">const</span> opcion = <span class="kw">async</span> (id, campo, textoOpcion, esperado = textoOpcion) =&gt; {
+  <span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">bloqueVisible</span>(id))) {
+    console.<span class="fn">log</span>(<span class="st">`      ${id}: el bloque no aparecio (condicion del formulario).`</span>);
+    <span class="fn">dato</span>(campo, esperado, <span class="st">'(bloque no aparecio: condicional)'</span>);
+    <span class="kw">return</span> false;
   }
-// …</pre>
+<span class="cm">// …</span></pre>
               </figure>
 
       </section>
@@ -188,11 +188,11 @@
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: await texto('name'</span></figcaption>
-<pre>await texto('name', 'nombre', escenario.nombre);
-await texto('apellido', 'apellido', escenario.apellido);
-console.log('      [default] apellidoMaterno no viene de la matriz.');
-await texto('apellidoMaterno', 'apellido_materno', String(escenario.apellido_materno || '').trim() || 'QA');
-await texto('email', 'correo', escenario.correo);</pre>
+<pre><span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'name'</span>, <span class="st">'nombre'</span>, escenario.nombre);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellido'</span>, <span class="st">'apellido'</span>, escenario.apellido);
+console.<span class="fn">log</span>(<span class="st">'      [default] apellidoMaterno no viene de la matriz.'</span>);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellidoMaterno'</span>, <span class="st">'apellido_materno'</span>, <span class="fn">String</span>(escenario.apellido_materno || <span class="st">''</span>).<span class="fn">trim</span>() || <span class="st">'QA'</span>);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'email'</span>, <span class="st">'correo'</span>, escenario.correo);</pre>
               </figure>
             </div>
           </article>
@@ -221,13 +221,13 @@ await texto('email', 'correo', escenario.correo);</pre>
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: const bloqueTel = page.locator('#pq-phone');</span></figcaption>
-<pre>const bloqueTel = page.locator('#pq-phone');
-const inputTelefono = bloqueTel.locator('input[placeholder*="léfono" i]').first();
-const lada = String(escenario.lada || '').trim();
-if (lada &amp;&amp; !/mexico|mx|\+?52/i.test(lada)) {
-// …
-  await inputTelefono.fill(String(escenario.telefono), { timeout: 4000 });
-    await casillaValidado.check({ timeout: 3000 });</pre>
+<pre><span class="kw">const</span> bloqueTel = page.<span class="fn">locator</span>(<span class="st">'#pq-phone'</span>);
+<span class="kw">const</span> inputTelefono = bloqueTel.<span class="fn">locator</span>(<span class="st">'input[placeholder*="léfono" i]'</span>).<span class="fn">first</span>();
+<span class="kw">const</span> lada = <span class="fn">String</span>(escenario.lada || <span class="st">''</span>).<span class="fn">trim</span>();
+<span class="kw">if</span> (lada &amp;&amp; !<span class="rx">/mexico|mx|\+?52/i</span>.<span class="fn">test</span>(lada)) {
+<span class="cm">// …</span>
+  <span class="kw">await</span> inputTelefono.<span class="fn">fill</span>(<span class="fn">String</span>(escenario.telefono), { timeout: <span class="nu">4000</span> });
+    <span class="kw">await</span> casillaValidado.<span class="fn">check</span>({ timeout: <span class="nu">3000</span> });</pre>
               </figure>
             </div>
           </article>
@@ -249,7 +249,7 @@ if (lada &amp;&amp; !/mexico|mx|\+?52/i.test(lada)) {
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: await opcion('need'</span></figcaption>
-<pre>await opcion('need', 'objetivo', traducir('need', escenario.objetivo || 'bebe'), escenario.objetivo);</pre>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'need'</span>, <span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'need'</span>, escenario.objetivo || <span class="st">'bebe'</span>), escenario.objetivo);</pre>
               </figure>
             </div>
           </article>
@@ -266,8 +266,8 @@ if (lada &amp;&amp; !/mexico|mx|\+?52/i.test(lada)) {
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: await opcion('sex'</span></figcaption>
-<pre>await opcion('sex', 'sexo', traducir('sex', escenario.sexo), escenario.sexo);
-await opcion('partner', 'pareja', traducir('partner', escenario.pareja || 'Sin pareja'), escenario.pareja);</pre>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sex'</span>, <span class="st">'sexo'</span>, <span class="fn">traducir</span>(<span class="st">'sex'</span>, escenario.sexo), escenario.sexo);
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'partner'</span>, <span class="st">'pareja'</span>, <span class="fn">traducir</span>(<span class="st">'partner'</span>, escenario.pareja || <span class="st">'Sin pareja'</span>), escenario.pareja);</pre>
               </figure>
             </div>
           </article>
@@ -304,9 +304,9 @@ await opcion('partner', 'pareja', traducir('partner', escenario.pareja || 'Sin p
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: await opcion('hijosSelf'</span></figcaption>
-<pre>await opcion('hijosSelf', 'hijos', traducir('hijosSelf', escenario.hijos ?? 0), escenario.hijos);
-  console.log('      [espejo] hijosPartner repite la columna `hijos` de la matriz.');
-  await opcion('hijosPartner', 'hijos (pareja, espejo)', traducir('hijosPartner', escenario.hijos ?? 0), escenario.hijos);</pre>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosSelf'</span>, <span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, escenario.hijos ?? <span class="nu">0</span>), escenario.hijos);
+  console.<span class="fn">log</span>(<span class="st">'      [espejo] hijosPartner repite la columna `hijos` de la matriz.'</span>);
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosPartner'</span>, <span class="st">'hijos (pareja, espejo)'</span>, <span class="fn">traducir</span>(<span class="st">'hijosPartner'</span>, escenario.hijos ?? <span class="nu">0</span>), escenario.hijos);</pre>
               </figure>
             </div>
           </article>
@@ -359,9 +359,9 @@ await opcion('partner', 'pareja', traducir('partner', escenario.pareja || 'Sin p
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: console.log('      [default] productos</span></figcaption>
-<pre>console.log('      [default] productos / prodOther no vienen de la matriz.');
-await opcionMulti('productos', 'productos', RESPUESTAS_POR_DEFECTO.productos);
-await texto('prodOther', 'prodOther', fraseProductoQA());</pre>
+<pre>console.<span class="fn">log</span>(<span class="st">'      [default] productos / prodOther no vienen de la matriz.'</span>);
+<span class="kw">await</span> <span class="fn">opcionMulti</span>(<span class="st">'productos'</span>, <span class="st">'productos'</span>, RESPUESTAS_POR_DEFECTO.productos);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'prodOther'</span>, <span class="st">'prodOther'</span>, <span class="fn">fraseProductoQA</span>());</pre>
               </figure>
             </div>
           </article>
@@ -389,11 +389,11 @@ await texto('prodOther', 'prodOther', fraseProductoQA());</pre>
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: const codigoTx = String(escenario.tratamientos</span></figcaption>
-<pre>const codigoTx = String(escenario.tratamientos ?? '3').trim();
-await opcion('txPrevios', 'tratamientos', traducir('txPrevios', codigoTx), `${codigoTx} (${traducir('txPrevios', codigoTx)})`);
-if (await bloqueVisible('ciclos', 1000)) {
-  console.log('      [default] ciclos no viene de la matriz.');
-  await opcion('ciclos', 'ciclos', RESPUESTAS_POR_DEFECTO.ciclos);</pre>
+<pre><span class="kw">const</span> codigoTx = <span class="fn">String</span>(escenario.tratamientos ?? <span class="st">'3'</span>).<span class="fn">trim</span>();
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'txPrevios'</span>, <span class="st">'tratamientos'</span>, <span class="fn">traducir</span>(<span class="st">'txPrevios'</span>, codigoTx), <span class="st">`${codigoTx} (${traducir('txPrevios', codigoTx)})`</span>);
+<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'ciclos'</span>, <span class="nu">1000</span>)) {
+  console.<span class="fn">log</span>(<span class="st">'      [default] ciclos no viene de la matriz.'</span>);
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'ciclos'</span>, <span class="st">'ciclos'</span>, RESPUESTAS_POR_DEFECTO.ciclos);</pre>
               </figure>
             </div>
           </article>
@@ -421,12 +421,12 @@ if (await bloqueVisible('ciclos', 1000)) {
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: const textoAbiertaQA = () =&gt; {</span></figcaption>
-<pre>const textoAbiertaQA = () =&gt; {
-  if (abiertaElegida === null) {
-    abiertaElegida = String(escenario.abierta ?? '').trim() || historiaAleatoria();
+<pre><span class="kw">const</span> textoAbiertaQA = () =&gt; {
+  <span class="kw">if</span> (abiertaElegida === null) {
+    abiertaElegida = <span class="fn">String</span>(escenario.abierta ?? <span class="st">''</span>).<span class="fn">trim</span>() || <span class="fn">historiaAleatoria</span>();
   }
-  return abiertaElegida;
-await texto('abierta', 'abierta', textoAbiertaQA(), 'textarea');</pre>
+  <span class="kw">return</span> abiertaElegida;
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'abierta'</span>, <span class="st">'abierta'</span>, <span class="fn">textoAbiertaQA</span>(), <span class="st">'textarea'</span>);</pre>
               </figure>
             </div>
           </article>
@@ -458,13 +458,13 @@ await texto('abierta', 'abierta', textoAbiertaQA(), 'textarea');</pre>
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: await opcion('country'</span></figcaption>
-<pre>await opcion('country', 'pais', traducir('country', escenario.pais || 'Mexico'), escenario.pais);
-if (await bloqueVisible('camino', 1200)) {
-  const haySucursal = sucursalEnSelect() !== null;
-  console.log(`      [derivado] camino: ${haySucursal ? 'el escenario trae sucursal -&gt; "En una sucursal en Mexico"' : 'sin sucursal -&gt; "Necesito orientacion"'}.`);
-// …
-cpEsperado = String(escenario.cp || '').trim();
-  if (!(await texto('cp', 'cp', cpEsperado))) {</pre>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'country'</span>, <span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'country'</span>, escenario.pais || <span class="st">'Mexico'</span>), escenario.pais);
+<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'camino'</span>, <span class="nu">1200</span>)) {
+  <span class="kw">const</span> haySucursal = <span class="fn">sucursalEnSelect</span>() !== null;
+  console.<span class="fn">log</span>(<span class="st">`      [derivado] camino: ${haySucursal ? 'el escenario trae sucursal -&gt; "En una sucursal en Mexico"' : 'sin sucursal -&gt; "Necesito orientacion"'}.`</span>);
+<span class="cm">// …</span>
+cpEsperado = <span class="fn">String</span>(escenario.cp || <span class="st">''</span>).<span class="fn">trim</span>();
+  <span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'cp'</span>, <span class="st">'cp'</span>, cpEsperado))) {</pre>
               </figure>
             </div>
           </article>
@@ -482,11 +482,11 @@ cpEsperado = String(escenario.cp || '').trim();
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: const sucursalBuscada = sucursalEnSelect();</span></figcaption>
-<pre>const sucursalBuscada = sucursalEnSelect();
-// …
-    const sel = page.locator('#pq-sucursal select').first();
-      const op = opciones.find((o) =&gt; sinAcentos(o.texto).includes(buscado)) ||
-      if (op) { await sel.selectOption(op.value); dato('lada', lada, op.texto); }</pre>
+<pre><span class="kw">const</span> sucursalBuscada = <span class="fn">sucursalEnSelect</span>();
+<span class="cm">// …</span>
+    <span class="kw">const</span> sel = page.<span class="fn">locator</span>(<span class="st">'#pq-sucursal select'</span>).<span class="fn">first</span>();
+      <span class="kw">const</span> op = opciones.<span class="fn">find</span>((o) =&gt; <span class="fn">sinAcentos</span>(o.texto).<span class="fn">includes</span>(buscado)) ||
+      <span class="kw">if</span> (op) { <span class="kw">await</span> sel.<span class="fn">selectOption</span>(op.value); <span class="fn">dato</span>(<span class="st">'lada'</span>, lada, op.texto); }</pre>
               </figure>
             </div>
           </article>
@@ -511,12 +511,12 @@ cpEsperado = String(escenario.cp || '').trim();
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: const boton = page.locator('button.guardado-inicio</span></figcaption>
-<pre>const boton = page.locator('button.guardado-inicio, button.savebar-btn')
-  .filter({ hasText: /guardar caso/i }).first();
-// …
-await boton.click({ timeout: 4000 });
-await page.waitForTimeout(1500);
-await manejarDedupeTrasGuardar();</pre>
+<pre><span class="kw">const</span> boton = page.<span class="fn">locator</span>(<span class="st">'button.guardado-inicio, button.savebar-btn'</span>)
+  .<span class="fn">filter</span>({ hasText: <span class="rx">/guardar caso/i</span> }).<span class="fn">first</span>();
+<span class="cm">// …</span>
+<span class="kw">await</span> boton.<span class="fn">click</span>({ timeout: <span class="nu">4000</span> });
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="nu">1500</span>);
+<span class="kw">await</span> <span class="fn">manejarDedupeTrasGuardar</span>();</pre>
               </figure>
             </div>
           </article>
@@ -589,14 +589,14 @@ await manejarDedupeTrasGuardar();</pre>
             
               <figure class="code">
                 <figcaption><span class="f">el spec</span><span>Ctrl+F: if (await bloqueVisible('filSelf')) {</span></figcaption>
-<pre>if (await bloqueVisible('filSelf')) {
-  const f = fechaDesdeEdad(escenario.edad_usuario);
-  const inputs = page.locator('#pq-filSelf input');
-    await inputs.nth(0).fill(String(escenario.nombre));
-    await inputs.nth(1).fill(String(escenario.apellido));
-    await inputs.nth(3).fill(f.dia);
-    await inputs.nth(4).fill(f.mes);
-    await inputs.nth(5).fill(f.anio);</pre>
+<pre><span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'filSelf'</span>)) {
+  <span class="kw">const</span> f = <span class="fn">fechaDesdeEdad</span>(escenario.edad_usuario);
+  <span class="kw">const</span> inputs = page.<span class="fn">locator</span>(<span class="st">'#pq-filSelf input'</span>);
+    <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(<span class="fn">String</span>(escenario.nombre));
+    <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">1</span>).<span class="fn">fill</span>(<span class="fn">String</span>(escenario.apellido));
+    <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">3</span>).<span class="fn">fill</span>(f.dia);
+    <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">4</span>).<span class="fn">fill</span>(f.mes);
+    <span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">5</span>).<span class="fn">fill</span>(f.anio);</pre>
               </figure>
             </div>
           </article>

@@ -120,11 +120,11 @@
 
         <figure class="code">
                 <figcaption><span class="f">el spec · el recorrido</span><span>Ctrl+F: for (let vuelta</span></figcaption>
-<pre>for (let vuelta = 0; vuelta &lt; 45; vuelta++) {
-  if (page.isClosed()) { console.log('&gt;&gt;&gt; Ventana cerrada: se corta el recorrido.'); break; }
-  const titulo = await encabezadoActual();
-  const contexto = sinAcentos(titulo + ' ' + await page.evaluate(() =&gt; document.body.innerText.replace(/\s+/g, ' ').slice(0, 300)).catch(() =&gt; ''));
-// …</pre>
+<pre><span class="kw">for</span> (<span class="kw">let</span> vuelta = <span class="nu">0</span>; vuelta &lt; <span class="nu">45</span>; vuelta++) {
+  <span class="kw">if</span> (page.<span class="fn">isClosed</span>()) { console.<span class="fn">log</span>(<span class="st">'&gt;&gt;&gt; Ventana cerrada: se corta el recorrido.'</span>); <span class="kw">break</span>; }
+  <span class="kw">const</span> titulo = <span class="kw">await</span> <span class="fn">encabezadoActual</span>();
+  <span class="kw">const</span> contexto = <span class="fn">sinAcentos</span>(titulo + <span class="st">' '</span> + <span class="kw">await</span> page.<span class="fn">evaluate</span>(() =&gt; document.body.innerText.<span class="fn">replace</span>(<span class="rx">/\s+/g</span>, <span class="st">' '</span>).<span class="fn">slice</span>(<span class="nu">0</span>, <span class="nu">300</span>)).<span class="kw">catch</span>(() =&gt; <span class="st">''</span>));
+<span class="cm">// …</span></pre>
               </figure>
 
       </section>
@@ -188,14 +188,14 @@
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'necesidad'</span></figcaption>
-<pre>clave: /como podemos ayudarte|que te trajo/, nombre: 'necesidad',
-firma: ['Quiero tener un bebé', 'evaluar mi salud', 'ligadura de trompas'],
-hacer: async () =&gt; {
-  await aceptarConsentimiento();
-  await opcion('objetivo', traducir('necesidad', escenario.objetivo || 'bebe'), escenario.objetivo);
+<pre>clave: <span class="rx">/como podemos ayudarte|que te trajo/</span>, nombre: <span class="st">'necesidad'</span>,
+firma: [<span class="st">'Quiero tener un bebé'</span>, <span class="st">'evaluar mi salud'</span>, <span class="st">'ligadura de trompas'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">await</span> <span class="fn">aceptarConsentimiento</span>();
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'necesidad'</span>, escenario.objetivo || <span class="st">'bebe'</span>), escenario.objetivo);
 
-  await page.waitForTimeout(600);
-  // …</pre>
+  <span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="nu">600</span>);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -212,9 +212,9 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'sexo y pareja'</span></figcaption>
-<pre>  clave: /cuentanos un poco sobre ti|cual es tu sexo/, nombre: 'sexo y pareja',
-  firma: ['Mujer', 'Hombre', 'Sin pareja'],
-  hacer: async () =&gt; contestarSexoYPareja()
+<pre>  clave: <span class="rx">/cuentanos un poco sobre ti|cual es tu sexo/</span>, nombre: <span class="st">'sexo y pareja'</span>,
+  firma: [<span class="st">'Mujer'</span>, <span class="st">'Hombre'</span>, <span class="st">'Sin pareja'</span>],
+  hacer: <span class="kw">async</span> () =&gt; <span class="fn">contestarSexoYPareja</span>()
 },</pre>
               </figure>
             </div>
@@ -230,9 +230,9 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'estado civil'</span></figcaption>
-<pre>  clave: /estado civil/, nombre: 'estado civil',
-  firma: ['Casad', 'Unión libre'],
-  hacer: async () =&gt; opcion('estado_civil', traducir('civil', escenario.estado_civil || 'Otro'), escenario.estado_civil)
+<pre>  clave: <span class="rx">/estado civil/</span>, nombre: <span class="st">'estado civil'</span>,
+  firma: [<span class="st">'Casad'</span>, <span class="st">'Unión libre'</span>],
+  hacer: <span class="kw">async</span> () =&gt; <span class="fn">opcion</span>(<span class="st">'estado_civil'</span>, <span class="fn">traducir</span>(<span class="st">'civil'</span>, escenario.estado_civil || <span class="st">'Otro'</span>), escenario.estado_civil)
 },</pre>
               </figure>
             </div>
@@ -249,14 +249,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'edades'</span></figcaption>
-<pre>clave: /cuantos anos tienes/, nombre: 'edades',
-hacer: async () =&gt; {
+<pre>clave: <span class="rx">/cuantos anos tienes/</span>, nombre: <span class="st">'edades'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
 
-  const campos = page.locator('input[inputmode="numeric"]:visible, input[placeholder="35"]:visible');
-  const n = await campos.count();
-  await campos.nth(0).fill(String(escenario.edad_usuario || 30));
-  dato('edad_usuario', escenario.edad_usuario, String(escenario.edad_usuario || 30));
-  // …</pre>
+  <span class="kw">const</span> campos = page.<span class="fn">locator</span>(<span class="st">'input[inputmode="numeric"]:visible, input[placeholder="35"]:visible'</span>);
+  <span class="kw">const</span> n = <span class="kw">await</span> campos.<span class="fn">count</span>();
+  <span class="kw">await</span> campos.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(<span class="fn">String</span>(escenario.edad_usuario || <span class="nu">30</span>));
+  <span class="fn">dato</span>(<span class="st">'edad_usuario'</span>, escenario.edad_usuario, <span class="fn">String</span>(escenario.edad_usuario || <span class="nu">30</span>));
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -272,14 +272,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'hijos'</span></figcaption>
-<pre>clave: /sobre tu familia|ya eres (mama|papa)|ya es (papa|mama)/, nombre: 'hijos',
-firma: ['1 hijo', '2 hijos', '3 o más'],
-hacer: async () =&gt; {
+<pre>clave: <span class="rx">/sobre tu familia|ya eres (mama|papa)|ya es (papa|mama)/</span>, nombre: <span class="st">'hijos'</span>,
+firma: [<span class="st">'1 hijo'</span>, <span class="st">'2 hijos'</span>, <span class="st">'3 o más'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
 
-  const cuerpo = sinAcentos(await page.evaluate(() =&gt; document.body.innerText).catch(() =&gt; ''));
-  const haySelf = /ya eres (mama|papa)|no soy (mama|papa)/.test(cuerpo);
-  const hayPareja = /(ya|no) es (papa|mama)|tiene \d+ hijo/.test(cuerpo);
-  // …</pre>
+  <span class="kw">const</span> cuerpo = <span class="fn">sinAcentos</span>(<span class="kw">await</span> page.<span class="fn">evaluate</span>(() =&gt; document.body.innerText).<span class="kw">catch</span>(() =&gt; <span class="st">''</span>));
+  <span class="kw">const</span> haySelf = <span class="rx">/ya eres (mama|papa)|no soy (mama|papa)/</span>.<span class="fn">test</span>(cuerpo);
+  <span class="kw">const</span> hayPareja = <span class="rx">/(ya|no) es (papa|mama)|tiene \d+ hijo/</span>.<span class="fn">test</span>(cuerpo);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -295,14 +295,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'trompas'</span></figcaption>
-<pre>clave: /trompas ligadas/, nombre: 'trompas',
-hacer: async () =&gt; {
-  await opcion('operada', traducir('trompas', escenario.operada ?? 0), escenario.operada);
+<pre>clave: <span class="rx">/trompas ligadas/</span>, nombre: <span class="st">'trompas'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'operada'</span>, <span class="fn">traducir</span>(<span class="st">'trompas'</span>, escenario.operada ?? <span class="nu">0</span>), escenario.operada);
 
-  await page.waitForTimeout(700);
-  const cuerpo = sinAcentos(await page.evaluate(() =&gt; document.body.innerText).catch(() =&gt; ''));
-  if (cuerpo.includes('reversion') || cuerpo.includes('fecundacion in vitro sin')) {
-  // …</pre>
+  <span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="nu">700</span>);
+  <span class="kw">const</span> cuerpo = <span class="fn">sinAcentos</span>(<span class="kw">await</span> page.<span class="fn">evaluate</span>(() =&gt; document.body.innerText).<span class="kw">catch</span>(() =&gt; <span class="st">''</span>));
+  <span class="kw">if</span> (cuerpo.<span class="fn">includes</span>(<span class="st">'reversion'</span>) || cuerpo.<span class="fn">includes</span>(<span class="st">'fecundacion in vitro sin'</span>)) {
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -319,10 +319,10 @@ hacer: async () =&gt; {
                 reporte lo marca, es ruido esperado.</div>
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'trompasOpt'</span></figcaption>
-<pre>  clave: /reversion|fecundacion in vitro sin/, nombre: 'trompasOpt',
-  hacer: async () =&gt; {
-    console.log('      [default] trompasOpt no viene de la matriz.');
-    await opcion('trompasOpt', RESPUESTAS_POR_DEFECTO.trompasOpt);
+<pre>  clave: <span class="rx">/reversion|fecundacion in vitro sin/</span>, nombre: <span class="st">'trompasOpt'</span>,
+  hacer: <span class="kw">async</span> () =&gt; {
+    console.<span class="fn">log</span>(<span class="st">'      [default] trompasOpt no viene de la matriz.'</span>);
+    <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'trompasOpt'</span>, RESPUESTAS_POR_DEFECTO.trompasOpt);
   }
 },</pre>
               </figure>
@@ -340,14 +340,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'embarazos'</span></figcaption>
-<pre>clave: /embarazos que no llegaron/, nombre: 'embarazos',
-firma: ['No, ninguno', 'Una vez', 'Dos veces', 'Tres o más'],
-hacer: async () =&gt; {
-  const crudo = String(escenario.embarazos ?? '').trim();
-  if (crudo !== '') await opcion('embarazos', traducir('embarazos', crudo), crudo);
-  else { console.log('      [default] embarazos no viene en esta hoja.'); await opcion('embarazos', RESPUESTAS_POR_DEFECTO.embarazos); }
+<pre>clave: <span class="rx">/embarazos que no llegaron/</span>, nombre: <span class="st">'embarazos'</span>,
+firma: [<span class="st">'No, ninguno'</span>, <span class="st">'Una vez'</span>, <span class="st">'Dos veces'</span>, <span class="st">'Tres o más'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> crudo = <span class="fn">String</span>(escenario.embarazos ?? <span class="st">''</span>).<span class="fn">trim</span>();
+  <span class="kw">if</span> (crudo !== <span class="st">''</span>) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, <span class="fn">traducir</span>(<span class="st">'embarazos'</span>, crudo), crudo);
+  <span class="kw">else</span> { console.<span class="fn">log</span>(<span class="st">'      [default] embarazos no viene en esta hoja.'</span>); <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, RESPUESTAS_POR_DEFECTO.embarazos); }
 }
-  // …</pre>
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -363,9 +363,9 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'gestacion'</span></figcaption>
-<pre>  clave: /impida llevar|padecimiento que/, nombre: 'gestacion',
-  firma: ['llevar', 'Necesit'],
-  hacer: async () =&gt; opcion('gestacion', traducir('gestacion', escenario.gestacion ?? 0), escenario.gestacion)
+<pre>  clave: <span class="rx">/impida llevar|padecimiento que/</span>, nombre: <span class="st">'gestacion'</span>,
+  firma: [<span class="st">'llevar'</span>, <span class="st">'Necesit'</span>],
+  hacer: <span class="kw">async</span> () =&gt; <span class="fn">opcion</span>(<span class="st">'gestacion'</span>, <span class="fn">traducir</span>(<span class="st">'gestacion'</span>, escenario.gestacion ?? <span class="nu">0</span>), escenario.gestacion)
 },</pre>
               </figure>
             </div>
@@ -382,14 +382,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'productos'</span></figcaption>
-<pre>clave: /interesa alguna tecnica/, nombre: 'productos',
-hacer: async () =&gt; {
+<pre>clave: <span class="rx">/interesa alguna tecnica/</span>, nombre: <span class="st">'productos'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
 
-  const puesto = await clicarOpcion('No lo sé', 1).catch(() =&gt; null);
-  if (puesto) { console.log(`      productos = "${puesto.slice(0, 40)}"`); dato('productos', 'No / No lo sé', EN_INGLES ? puesto.slice(0, 40) + ' (en ingles)' : puesto.slice(0, 40)); }
-  else console.log('      productos: esta variante no ofrece "No / No lo sé"; se deja sin marcar.');
-  const frase = FRASES_PRODUCTO[Math.floor(Math.random() * FRASES_PRODUCTO.length)];
-  // …</pre>
+  <span class="kw">const</span> puesto = <span class="kw">await</span> <span class="fn">clicarOpcion</span>(<span class="st">'No lo sé'</span>, <span class="nu">1</span>).<span class="kw">catch</span>(() =&gt; null);
+  <span class="kw">if</span> (puesto) { console.<span class="fn">log</span>(<span class="st">`      productos = "${puesto.slice(0, 40)}"`</span>); <span class="fn">dato</span>(<span class="st">'productos'</span>, <span class="st">'No / No lo sé'</span>, EN_INGLES ? puesto.<span class="fn">slice</span>(<span class="nu">0</span>, <span class="nu">40</span>) + <span class="st">' (en ingles)'</span> : puesto.<span class="fn">slice</span>(<span class="nu">0</span>, <span class="nu">40</span>)); }
+  <span class="kw">else</span> console.<span class="fn">log</span>(<span class="st">'      productos: esta variante no ofrece "No / No lo sé"; se deja sin marcar.'</span>);
+  <span class="kw">const</span> frase = FRASES_PRODUCTO[Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * FRASES_PRODUCTO.length)];
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -404,9 +404,9 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tiempo buscando'</span></figcaption>
-<pre>  clave: /hace cuanto busca|hace cuanto quiere(s|n) ser/, nombre: 'tiempo buscando',
-  firma: ['Menos de 6 meses', 'De 6 meses a 1 año', 'Entre 1 y 5', 'Más de 5'],
-  hacer: async () =&gt; opcion('tiempo_buscando', traducir('busqueda', escenario.tiempo_buscando || 'Menos de 6 meses'), escenario.tiempo_buscando)
+<pre>  clave: <span class="rx">/hace cuanto busca|hace cuanto quiere(s|n) ser/</span>, nombre: <span class="st">'tiempo buscando'</span>,
+  firma: [<span class="st">'Menos de 6 meses'</span>, <span class="st">'De 6 meses a 1 año'</span>, <span class="st">'Entre 1 y 5'</span>, <span class="st">'Más de 5'</span>],
+  hacer: <span class="kw">async</span> () =&gt; <span class="fn">opcion</span>(<span class="st">'tiempo_buscando'</span>, <span class="fn">traducir</span>(<span class="st">'busqueda'</span>, escenario.tiempo_buscando || <span class="st">'Menos de 6 meses'</span>), escenario.tiempo_buscando)
 },</pre>
               </figure>
             </div>
@@ -422,14 +422,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tratamientos'</span></figcaption>
-<pre>clave: /tratamiento de reproduccion asistida/, nombre: 'tratamientos',
-firma: ['Fecundación in Vitro', 'inseminaciones', 'medicamentos para ovular'],
-hacer: async () =&gt; {
-  const codigo = String(escenario.tratamientos ?? '3').trim();
-  if (codigo === '4') console.warn('      tratamientos: "4" (cirugias) no existe aqui -&gt; Ninguno.');
+<pre>clave: <span class="rx">/tratamiento de reproduccion asistida/</span>, nombre: <span class="st">'tratamientos'</span>,
+firma: [<span class="st">'Fecundación in Vitro'</span>, <span class="st">'inseminaciones'</span>, <span class="st">'medicamentos para ovular'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> codigo = <span class="fn">String</span>(escenario.tratamientos ?? <span class="st">'3'</span>).<span class="fn">trim</span>();
+  <span class="kw">if</span> (codigo === <span class="st">'4'</span>) console.<span class="fn">warn</span>(<span class="st">'      tratamientos: "4" (cirugias) no existe aqui -&gt; Ninguno.'</span>);
 
-  await opcion('tratamientos', traducir('txPrevios', codigo), `${codigo} (${traducir('txPrevios', codigo)})`);
-  // …</pre>
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'tratamientos'</span>, <span class="fn">traducir</span>(<span class="st">'txPrevios'</span>, codigo), <span class="st">`${codigo} (${traducir('txPrevios', codigo)})`</span>);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -444,10 +444,10 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'ciclos'</span></figcaption>
-<pre>  clave: /cuantos ciclos/, nombre: 'ciclos',
-  hacer: async () =&gt; {
-    console.log('      [default] ciclos no viene de la matriz.');
-    await opcion('ciclos', RESPUESTAS_POR_DEFECTO.ciclos + ' ciclo');
+<pre>  clave: <span class="rx">/cuantos ciclos/</span>, nombre: <span class="st">'ciclos'</span>,
+  hacer: <span class="kw">async</span> () =&gt; {
+    console.<span class="fn">log</span>(<span class="st">'      [default] ciclos no viene de la matriz.'</span>);
+    <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'ciclos'</span>, RESPUESTAS_POR_DEFECTO.ciclos + <span class="st">' ciclo'</span>);
   }
 },</pre>
               </figure>
@@ -464,9 +464,9 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tiempo bebe'</span></figcaption>
-<pre>  clave: /en cuanto tiempo (les|te) gustaria/, nombre: 'tiempo bebe',
-  firma: ['antes posible', 'En uno o dos', 'Más adelante'],
-  hacer: async () =&gt; opcion('tiempo_bebe', traducir('tiempoEmb', escenario.tiempo_bebe || 'Menos de 1 año'), escenario.tiempo_bebe)
+<pre>  clave: <span class="rx">/en cuanto tiempo (les|te) gustaria/</span>, nombre: <span class="st">'tiempo bebe'</span>,
+  firma: [<span class="st">'antes posible'</span>, <span class="st">'En uno o dos'</span>, <span class="st">'Más adelante'</span>],
+  hacer: <span class="kw">async</span> () =&gt; <span class="fn">opcion</span>(<span class="st">'tiempo_bebe'</span>, <span class="fn">traducir</span>(<span class="st">'tiempoEmb'</span>, escenario.tiempo_bebe || <span class="st">'Menos de 1 año'</span>), escenario.tiempo_bebe)
 },</pre>
               </figure>
             </div>
@@ -482,8 +482,8 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'informativa'</span></figcaption>
-<pre>  clave: /llegaste al lugar correcto|estamos muy cerca/, nombre: 'informativa',
-  hacer: async () =&gt; {  }
+<pre>  clave: <span class="rx">/llegaste al lugar correcto|estamos muy cerca/</span>, nombre: <span class="st">'informativa'</span>,
+  hacer: <span class="kw">async</span> () =&gt; {  }
 },</pre>
               </figure>
             </div>
@@ -499,14 +499,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'motivo'</span></figcaption>
-<pre>clave: /como quieres continuar/, nombre: 'motivo',
-firma: ['segunda opinión', 'investigando', 'especialista'],
-hacer: async () =&gt; {
-  const codigo = String(escenario.continuar_como ?? '').trim();
-  const querido = MOTIVO_POR_CODIGO[codigo];
-  if (!querido) console.warn(`      motivo: continuar_como=${JSON.stringify(escenario.continuar_como)} fuera de catalogo -&gt; especialista.`);
-  const ok = await opcion('continuar_como', querido || MOTIVO_POR_CODIGO[0], escenario.continuar_como);
-  // …</pre>
+<pre>clave: <span class="rx">/como quieres continuar/</span>, nombre: <span class="st">'motivo'</span>,
+firma: [<span class="st">'segunda opinión'</span>, <span class="st">'investigando'</span>, <span class="st">'especialista'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> codigo = <span class="fn">String</span>(escenario.continuar_como ?? <span class="st">''</span>).<span class="fn">trim</span>();
+  <span class="kw">const</span> querido = MOTIVO_POR_CODIGO[codigo];
+  <span class="kw">if</span> (!querido) console.<span class="fn">warn</span>(<span class="st">`      motivo: continuar_como=${JSON.stringify(escenario.continuar_como)} fuera de catalogo -&gt; especialista.`</span>);
+  <span class="kw">const</span> ok = <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'continuar_como'</span>, querido || MOTIVO_POR_CODIGO[<span class="nu">0</span>], escenario.continuar_como);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -523,14 +523,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'contacto'</span></figcaption>
-<pre>clave: /revise tu caso|segunda opinion|informacion personalizada|para seguir en contacto|datos de contacto/, nombre: 'contacto',
-hacer: async () =&gt; {
-  await escribir('input[placeholder*="nombre" i], input[placeholder*="first name" i]', 'nombre', escenario.nombre);
-  await escribir('input[placeholder*="apellido paterno" i], input[placeholder*="apellido" i], input[placeholder*="last name" i]', 'apellido', escenario.apellido);
-  const materno = page.locator('input[placeholder*="materno" i], input[placeholder*="maternal" i]').filter({ visible: true }).first();
-  if (await materno.count()) await materno.fill('QA').catch(() =&gt; {});
-  await escribir('input[placeholder*="correo" i], input[type="email"]', 'correo', escenario.correo);
-  // …</pre>
+<pre>clave: <span class="rx">/revise tu caso|segunda opinion|informacion personalizada|para seguir en contacto|datos de contacto/</span>, nombre: <span class="st">'contacto'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[placeholder*="nombre" i], input[placeholder*="first name" i]'</span>, <span class="st">'nombre'</span>, escenario.nombre);
+  <span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[placeholder*="apellido paterno" i], input[placeholder*="apellido" i], input[placeholder*="last name" i]'</span>, <span class="st">'apellido'</span>, escenario.apellido);
+  <span class="kw">const</span> materno = page.<span class="fn">locator</span>(<span class="st">'input[placeholder*="materno" i], input[placeholder*="maternal" i]'</span>).<span class="fn">filter</span>({ visible: true }).<span class="fn">first</span>();
+  <span class="kw">if</span> (<span class="kw">await</span> materno.<span class="fn">count</span>()) <span class="kw">await</span> materno.<span class="fn">fill</span>(<span class="st">'QA'</span>).<span class="kw">catch</span>(() =&gt; {});
+  <span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[placeholder*="correo" i], input[type="email"]'</span>, <span class="st">'correo'</span>, escenario.correo);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -546,14 +546,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'pais'</span></figcaption>
-<pre>clave: /en que pais vives/, nombre: 'pais',
-firma: ['Otro país', 'Estados Unidos'],
-hacer: async () =&gt; {
-  await opcion('pais', traducir('pais', escenario.pais || 'Mexico'), escenario.pais);
+<pre>clave: <span class="rx">/en que pais vives/</span>, nombre: <span class="st">'pais'</span>,
+firma: [<span class="st">'Otro país'</span>, <span class="st">'Estados Unidos'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'pais'</span>, escenario.pais || <span class="st">'Mexico'</span>), escenario.pais);
 
-  await page.waitForTimeout(800);
-  const cp = String(escenario.cp || '').trim();
-  // …</pre>
+  <span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="nu">800</span>);
+  <span class="kw">const</span> cp = <span class="fn">String</span>(escenario.cp || <span class="st">''</span>).<span class="fn">trim</span>();
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -569,14 +569,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'camino (fuera de MX)'</span></figcaption>
-<pre>clave: /coordinar tu atencion|desde que sucursal/, nombre: 'camino (fuera de MX)',
-firma: ['sucursal en', 'orient'],
-hacer: async () =&gt; {
+<pre>clave: <span class="rx">/coordinar tu atencion|desde que sucursal/</span>, nombre: <span class="st">'camino (fuera de MX)'</span>,
+firma: [<span class="st">'sucursal en'</span>, <span class="st">'orient'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
 
-  const s = sinAcentos(escenario.sucursal);
-  if (s &amp;&amp; SUCURSALES_EEUU.test(s)) await opcion('camino', 'Estados Unidos', escenario.sucursal);
-  else if (s &amp;&amp; s !== 'sin sucursal') await opcion('camino', 'México', escenario.sucursal);
-  // …</pre>
+  <span class="kw">const</span> s = <span class="fn">sinAcentos</span>(escenario.sucursal);
+  <span class="kw">if</span> (s &amp;&amp; SUCURSALES_EEUU.<span class="fn">test</span>(s)) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'Estados Unidos'</span>, escenario.sucursal);
+  <span class="kw">else</span> <span class="kw">if</span> (s &amp;&amp; s !== <span class="st">'sin sucursal'</span>) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'México'</span>, escenario.sucursal);
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -592,14 +592,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'sucursal'</span></figcaption>
-<pre>clave: /que sucursal te (conviene|resultaria|queda)|en que sucursal (quieres|te gustaria)|cual es la sucursal|ubicaciones en ee/, nombre: 'sucursal',
-hacer: async () =&gt; {
-  const buscada = sucursalEnPantalla();
-  if (!buscada) { console.warn('      sucursal: el escenario no la trae; la elige el QA.'); dato('sucursal', escenario.sucursal, '(sin sucursal: la decide el QA)'); return; }
+<pre>clave: <span class="rx">/que sucursal te (conviene|resultaria|queda)|en que sucursal (quieres|te gustaria)|cual es la sucursal|ubicaciones en ee/</span>, nombre: <span class="st">'sucursal'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> buscada = <span class="fn">sucursalEnPantalla</span>();
+  <span class="kw">if</span> (!buscada) { console.<span class="fn">warn</span>(<span class="st">'      sucursal: el escenario no la trae; la elige el QA.'</span>); <span class="fn">dato</span>(<span class="st">'sucursal'</span>, escenario.sucursal, <span class="st">'(sin sucursal: la decide el QA)'</span>); <span class="kw">return</span>; }
 
-  const buscador = page.locator('input[placeholder*="Buscar" i], input[placeholder*="Search" i]').filter({ visible: true }).first();
-  if (await buscador.count()) { await buscador.fill(buscada).catch(() =&gt; {}); await page.waitForTimeout(600); }
-  // …</pre>
+  <span class="kw">const</span> buscador = page.<span class="fn">locator</span>(<span class="st">'input[placeholder*="Buscar" i], input[placeholder*="Search" i]'</span>).<span class="fn">filter</span>({ visible: true }).<span class="fn">first</span>();
+  <span class="kw">if</span> (<span class="kw">await</span> buscador.<span class="fn">count</span>()) { <span class="kw">await</span> buscador.<span class="fn">fill</span>(buscada).<span class="kw">catch</span>(() =&gt; {}); <span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="nu">600</span>); }
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -615,14 +615,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'pregunta abierta'</span></figcaption>
-<pre>clave: /por que crees que requieres/, nombre: 'pregunta abierta',
-hacer: async () =&gt; {
-  const historia = textoAbiertaQA();
-  const ta = page.locator('textarea').filter({ visible: true }).first();
-  await ta.fill(historia).catch(() =&gt; {});
-  if (abiertaDeMatriz) {
+<pre>clave: <span class="rx">/por que crees que requieres/</span>, nombre: <span class="st">'pregunta abierta'</span>,
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();
+  <span class="kw">const</span> ta = page.<span class="fn">locator</span>(<span class="st">'textarea'</span>).<span class="fn">filter</span>({ visible: true }).<span class="fn">first</span>();
+  <span class="kw">await</span> ta.<span class="fn">fill</span>(historia).<span class="kw">catch</span>(() =&gt; {});
+  <span class="kw">if</span> (abiertaDeMatriz) {
 
-  // …</pre>
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -638,14 +638,14 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'recomendacion'</span></figcaption>
-<pre>clave: /alguien te recomendo/, nombre: 'recomendacion',
-firma: ['por mi cuenta', 'amigo o familiar', 'doctor'],
-hacer: async () =&gt; {
-  await opcion('recomendacion', traducir('recom', escenario.recomendacion || 'No'), escenario.recomendacion);
+<pre>clave: <span class="rx">/alguien te recomendo/</span>, nombre: <span class="st">'recomendacion'</span>,
+firma: [<span class="st">'por mi cuenta'</span>, <span class="st">'amigo o familiar'</span>, <span class="st">'doctor'</span>],
+hacer: <span class="kw">async</span> () =&gt; {
+  <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'recomendacion'</span>, <span class="fn">traducir</span>(<span class="st">'recom'</span>, escenario.recomendacion || <span class="st">'No'</span>), escenario.recomendacion);
 
-  const ref = page.locator('input[placeholder*="recomend" i], input[placeholder*="nombre" i], input[placeholder*="recommend" i], input[placeholder*="last name" i]').filter({ visible: true }).first();
-  if (await ref.count()) { await ref.fill('Dr. Test Prueba').catch(() =&gt; {}); dato('recom_name', '(default)', 'Dr. Test Prueba'); }
-  // …</pre>
+  <span class="kw">const</span> ref = page.<span class="fn">locator</span>(<span class="st">'input[placeholder*="recomend" i], input[placeholder*="nombre" i], input[placeholder*="recommend" i], input[placeholder*="last name" i]'</span>).<span class="fn">filter</span>({ visible: true }).<span class="fn">first</span>();
+  <span class="kw">if</span> (<span class="kw">await</span> ref.<span class="fn">count</span>()) { <span class="kw">await</span> ref.<span class="fn">fill</span>(<span class="st">'Dr. Test Prueba'</span>).<span class="kw">catch</span>(() =&gt; {}); <span class="fn">dato</span>(<span class="st">'recom_name'</span>, <span class="st">'(default)'</span>, <span class="st">'Dr. Test Prueba'</span>); }
+  <span class="cm">// …</span></pre>
               </figure>
             </div>
           </article>
@@ -661,11 +661,11 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'recom_name'</span></figcaption>
-<pre>  clave: /como se llama quien te recomendo|quien te recomendo|nombre de quien/, nombre: 'recom_name',
+<pre>  clave: <span class="rx">/como se llama quien te recomendo|quien te recomendo|nombre de quien/</span>, nombre: <span class="st">'recom_name'</span>,
   firma: [],
-  hacer: async () =&gt; {
-    const campo = page.locator('#recom-name, input[placeholder*="Fernanda" i], input[placeholder*="Dra" i], input[placeholder*="nombre y apellido" i], input[placeholder*="nombre" i]').filter({ visible: true }).first();
-    if (await campo.count()) { await campo.fill('Dr. Test Prueba').catch(() =&gt; {}); dato('recom_name', 'Dr. Test Prueba (default)', 'Dr. Test Prueba'); }
+  hacer: <span class="kw">async</span> () =&gt; {
+    <span class="kw">const</span> campo = page.<span class="fn">locator</span>(<span class="st">'#recom-name, input[placeholder*="Fernanda" i], input[placeholder*="Dra" i], input[placeholder*="nombre y apellido" i], input[placeholder*="nombre" i]'</span>).<span class="fn">filter</span>({ visible: true }).<span class="fn">first</span>();
+    <span class="kw">if</span> (<span class="kw">await</span> campo.<span class="fn">count</span>()) { <span class="kw">await</span> campo.<span class="fn">fill</span>(<span class="st">'Dr. Test Prueba'</span>).<span class="kw">catch</span>(() =&gt; {}); <span class="fn">dato</span>(<span class="st">'recom_name'</span>, <span class="st">'Dr. Test Prueba (default)'</span>, <span class="st">'Dr. Test Prueba'</span>); }
   }
 },</pre>
               </figure>
@@ -683,11 +683,11 @@ hacer: async () =&gt; {
             
               <figure class="code">
                 <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'conociste'</span></figcaption>
-<pre>  clave: /como nos conociste/, nombre: 'conociste',
-  firma: ['Google', 'Evento', 'Inteligencia Artificial'],
-  hacer: async () =&gt; {
-    const crudo = String(escenario.como_nos_conociste || 'Google');
-    await opcion('como_nos_conociste', traducir('conociste', crudo), crudo);
+<pre>  clave: <span class="rx">/como nos conociste/</span>, nombre: <span class="st">'conociste'</span>,
+  firma: [<span class="st">'Google'</span>, <span class="st">'Evento'</span>, <span class="st">'Inteligencia Artificial'</span>],
+  hacer: <span class="kw">async</span> () =&gt; {
+    <span class="kw">const</span> crudo = <span class="fn">String</span>(escenario.como_nos_conociste || <span class="st">'Google'</span>);
+    <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'como_nos_conociste'</span>, <span class="fn">traducir</span>(<span class="st">'conociste'</span>, crudo), crudo);
   }
 }</pre>
               </figure>
@@ -717,11 +717,11 @@ hacer: async () =&gt; {
         </div>
               <figure class="code">
                 <figcaption><span class="f">el spec · bloque OTP</span><span>Ctrl+F: llenarOTP()</span></figcaption>
-<pre>if (await llenarOTP()) {
-// …
-  await verificarOTP();
-  console.log('&gt;&gt;&gt; OTP resuelto. Hasta aqui llega el llenado automatico.');
-  break;</pre>
+<pre><span class="kw">if</span> (<span class="kw">await</span> <span class="fn">llenarOTP</span>()) {
+<span class="cm">// …</span>
+  <span class="kw">await</span> <span class="fn">verificarOTP</span>();
+  console.<span class="fn">log</span>(<span class="st">'&gt;&gt;&gt; OTP resuelto. Hasta aqui llega el llenado automatico.'</span>);
+  <span class="kw">break</span>;</pre>
               </figure>
       </section>
 
