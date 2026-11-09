@@ -206,3 +206,31 @@ html,body{margin:0;padding:0;background:var(--fondo)}
 .doc-body p a, .doc-body .nota a, .doc-body li a{color:var(--acento-ink);
   font-weight:650;text-decoration:none;border-bottom:1px dotted var(--acento-ink)}
 .doc-body p a:hover, .doc-body .nota a:hover, .doc-body li a:hover{color:var(--acento);border-bottom-style:solid}
+
+/* ---- Matrices IC (solo visualización) ---- */
+.micBarra{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:4px 0 18px}
+.tabU{padding:9px 22px;border-radius:999px;border:1px solid var(--borde);
+  background:var(--panel);color:var(--ink-tenue);font-family:var(--sans);
+  font-size:13.5px;font-weight:650;cursor:pointer;transition:.15s}
+.tabU:hover{border-color:var(--acento)}
+.tabU.on{background:var(--acento);border-color:transparent;color:#fff;box-shadow:var(--sombra)}
+.micSec{border:1px solid var(--borde);border-radius:12px;margin-bottom:14px;
+  background:var(--panel);box-shadow:var(--sombra);overflow:hidden}
+.micSecHead{display:flex;align-items:baseline;gap:10px;padding:10px 14px;
+  background:var(--navy-800);color:#e9eef6}
+.micSecTitulo{font-size:12.5px;font-weight:750;text-transform:uppercase;letter-spacing:.06em}
+.micSecN{font-size:11px;color:#9db4d6}
+.micTabla{width:100%;border-collapse:collapse}
+.micTabla thead th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--ink-debil);text-align:left;padding:8px 10px;border-bottom:1px solid var(--borde)}
+.micTabla tbody tr{border-bottom:1px solid var(--borde)}
+.micTabla tbody tr:last-child{border-bottom:none}
+.micTabla tbody tr:hover{background:var(--panel-2)}
+.micCod{padding:7px 4px 7px 12px;width:40px;font-family:var(--mono);font-size:11px;
+  font-weight:700;color:var(--ink-debil);white-space:nowrap}
+.micPunto{padding:7px 10px;width:46%;font-size:13.5px;color:var(--ink)}
+.micEstado{padding:7px 10px;text-align:center;white-space:nowrap}
+.micObs{padding:7px 10px;font-size:12.5px;color:var(--ink-debil)}
+.micChip{display:inline-block;min-width:50px;text-align:center;padding:3px 9px;
+  border-radius:10px;font-size:11px;font-weight:700;color:var(--ink-debil);
+  background:var(--panel);border:1px dashed var(--borde)}
