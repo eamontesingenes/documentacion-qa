@@ -147,7 +147,11 @@
       <section id="recorrido">
         <div class="secHead"><span class="bar"></span><h2>El recorrido, pantalla por pantalla</h2></div>
         <p class="secIntro">En el orden en que el producto las presenta. Cada una dice qué dato del caso se decide ahí
-          y cómo la contesta la prueba.</p>
+          y cómo la contesta la prueba. En los fragmentos, <code>escenario</code> es el renglón del
+          caso leído del Excel: <code>escenario.objetivo</code> es la celda de la columna
+          «objetivo» de ese renglón, <code>escenario.sexo</code> la de «sexo», y así con cada
+          campo. <code>traducir()</code> convierte lo que dice la celda al texto exacto del botón
+          en pantalla.</p>
 
         <div class="steps">
 

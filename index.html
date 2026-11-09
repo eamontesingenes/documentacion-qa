@@ -66,8 +66,12 @@
           <div class="card">
             <h3><span class="ic">1</span> La matriz manda</h3>
             <p>Cada caso es un renglón de la matriz de Excel, identificado por su <b>correo</b>
-              (<code>pruebas_test_obu_012@gmail.com</code> o solo el número). El spec arma el
-              escenario leyendo esa fila.</p>
+              (<code>pruebas_test_obu_012@gmail.com</code> o solo el número). Al arrancar, la
+              prueba busca ese renglón y arma con él el <b>escenario</b>: cada columna de la hoja
+              se vuelve un dato del caso. Por eso en los fragmentos de código se ve
+              <code>escenario.objetivo</code>, <code>escenario.sexo</code>,
+              <code>escenario.cp</code>… — son las celdas de las columnas «objetivo», «sexo»,
+              «cp» de ese renglón.</p>
           </div>
           <div class="card">
             <h3><span class="ic">2</span> El spec llena</h3>

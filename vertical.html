@@ -161,7 +161,12 @@
       <section id="recorrido">
         <div class="secHead"><span class="bar"></span><h2>El llenado, bloque por bloque</h2></div>
         <p class="secIntro">En el orden en que la prueba los llena. Cada uno dice qué dato del caso se decide ahí
-          y cómo se contesta. Los separadores marcan las etapas.</p>
+          y cómo se contesta. Los separadores marcan las etapas. En los fragmentos,
+          <code>escenario</code> es el renglón del caso leído del Excel:
+          <code>escenario.objetivo</code> es la celda de la columna «objetivo» de ese renglón,
+          <code>escenario.sucursal</code> la de «sucursal», y así con cada campo.
+          <code>traducir()</code> convierte lo que dice la celda al texto exacto de la opción en
+          el formulario.</p>
 
         <div class="etapaHead"><span class="et">Etapa 1 · Filiación</span><span class="linea"></span></div>
 
