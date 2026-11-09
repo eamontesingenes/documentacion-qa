@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentación QA · Paquete del equipo — Ingenes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="doc-wrap">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="doc-side">
+    <div class="doc-brand">
+      <div class="glyph">i</div>
+      <div><b>Ingenes Tools</b><span>Documentación QA</span></div>
+    </div>
+
+    <div class="seccTitle">Specs del equipo</div>
+    <a class="doc-spec on" href="index.html">Portada
+      <small>Qué es el paquete y cómo correrlo</small></a>
+    <a class="doc-spec" href="digital.html" style="margin-top:8px">OB Digital Unificado
+      <small>Onboarding digital · 24 pantallas</small></a>
+    <a class="doc-spec" href="vertical.html" style="margin-top:8px">OB Unificado Vertical
+      <small>Formulario interno · bloques por etapa</small></a>
+
+    <div class="seccTitle">En esta página</div>
+    <ul class="doc-toc">
+      <li><a href="#que-es"><span class="n">—</span> Qué es el paquete</a></li>
+      <li><a href="#specs"><span class="n">—</span> Los dos specs</a></li>
+      <li><a href="#contenido"><span class="n">—</span> Qué trae la carpeta</a></li>
+      <li><a href="#correr"><span class="n">—</span> Cómo se corre</a></li>
+      <li><a href="#problemas"><span class="n">—</span> Problemas comunes</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="doc-main" id="top">
+    <header class="doc-head">
+      <div class="eyebrow"><span class="dot"></span> Documentación técnica · Paquete del equipo</div>
+      <h1>Llenado automatizado de formularios Ingenes</h1>
+      <p class="lede">Documentación de los specs que el equipo de QA usa para llenar los formularios
+        de Ingenes con los casos de la matriz de Excel. Cada página explica qué controla cada parte
+        del código, en el orden real del llenado: dónde se decide el sexo, la sucursal, el teléfono
+        o la pregunta abierta, y con qué fragmento del spec.</p>
+      <div class="metarow">
+        <span class="pill"><b>Specs:</b> 2 (Digital y Vertical)</span>
+        <span class="pill"><b>Motor:</b> Playwright + Node 18+</span>
+        <span class="pill"><b>Casos:</b> matriz .xlsm, por correo</span>
+      </div>
+    </header>
+
+    <div class="doc-body">
+
+      <!-- ===== QUÉ ES ===== -->
+      <section id="que-es">
+        <div class="secHead"><span class="bar"></span><h2>Qué es el paquete</h2></div>
+        <p class="secIntro">Una carpeta auto-contenida con dos specs de Playwright y sus ayudantes.
+          Se corre con los casos de la matriz que comparte el QA líder, abre el navegador y
+          <b>el formulario se llena solo</b>. El paquete <b>solo llena</b>: no extrae evidencia ni
+          evalúa resultados — eso lo hace el QA líder en su equipo.</p>
+
+        <div class="grid">
+          <div class="card">
+            <h3><span class="ic">1</span> La matriz manda</h3>
+            <p>Cada caso es un renglón de la matriz de Excel, identificado por su <b>correo</b>
+              (<code>pruebas_test_obu_012@gmail.com</code> o solo el número). El spec arma el
+              escenario leyendo esa fila.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">2</span> El spec llena</h3>
+            <p>Abre el formulario y lo contesta campo por campo, comparando en el log lo
+              <b>esperado</b> (la matriz) contra lo que <b>quedó</b> en el control.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">3</span> El QA cierra</h3>
+            <p>Cuando aparece el <b>calendario</b>, la cita se agenda a mano. Al <b>cerrar la
+              ventana</b> termina la prueba; si hay más casos en la lista, el siguiente abre solo.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== LOS DOS SPECS ===== -->
+      <section id="specs">
+        <div class="secHead"><span class="bar"></span><h2>Los dos specs</h2></div>
+        <p class="secIntro">Mismo paquete, dos formularios distintos. Cada uno tiene su página con
+          el recorrido completo y los fragmentos de código que controlan cada dato.</p>
+
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+          <a class="card" href="digital.html">
+            <h3><span class="ic">D</span> OB Digital Unificado</h3>
+            <p>El onboarding digital público: un asistente de <b>24 pantallas + OTP</b> que se
+              revelan según las respuestas. El spec corre un motor que reconoce la pantalla que
+              tiene enfrente y la contesta.</p>
+            <p class="ir">Ver el recorrido pantalla por pantalla →</p>
+          </a>
+          <a class="card" href="vertical.html">
+            <h3><span class="ic">V</span> OB Unificado Vertical</h3>
+            <p>El formulario interno de los agentes: <b>una sola página de bloques</b> que se
+              destapan por condición. El spec los llena por etapas (filiación → cuestionario →
+              guardar caso → agenda).</p>
+            <p class="ir">Ver el llenado bloque por bloque →</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== CONTENIDO ===== -->
+      <section id="contenido">
+        <div class="secHead"><span class="bar"></span><h2>Qué trae la carpeta</h2></div>
+        <p class="secIntro">Todo lo que sigue vive dentro de la carpeta del paquete — la que tiene
+          el <code>README.md</code>, el <code>package.json</code> y los <code>.spec.js</code>.</p>
+
+        <div class="grid">
+          <div class="card">
+            <h3><span class="ic">◆</span> Los specs</h3>
+            <p><code>ingenes_OB_Digital_Unificado.spec.js</code> y
+              <code>ingenes_OB_Unificado_Vertical.spec.js</code>. Son los archivos que se corren
+              con Playwright.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">◆</span> matrices/</h3>
+            <p>Viene vacía: aquí se copia el <b>.xlsm</b> que comparte el QA líder, sin cambiarle
+              el nombre. Sin matriz no hay casos que correr.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">◆</span> correos.txt</h3>
+            <p>La lista de casos a correr, un caso por renglón: un número (<code>7</code>), un
+              rango (<code>20-25</code>) o el correo completo.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">◆</span> helpers/</h3>
+            <p><code>cargarEscenariosBeta.js</code> arma el escenario leyendo la matriz por correo.
+              <code>traductorObd.js</code> + <code>_obd_i18n.json</code> son el modo inglés del
+              Digital: traducen con el diccionario del producto.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">◆</span> vendor/ y package.json</h3>
+            <p>Las dependencias del paquete. Se instalan una sola vez con
+              <code>npm install</code>.</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">◆</span> Lo que NO trae</h3>
+            <p>Extracción de evidencia (Kafka, Inconcert), evaluador y reportes: en el paquete esas
+              llamadas están <b>vacías a propósito</b>. El spec solo avisa «Llenado terminado».</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CÓMO SE CORRE ===== -->
+      <section id="correr">
+        <div class="secHead"><span class="bar"></span><h2>Cómo se corre</h2></div>
+        <p class="secIntro">Los pasos del README, en corto. Todo se hace en una terminal PowerShell
+          abierta <b>dentro de la carpeta del paquete</b>.</p>
+
+        <div class="steps">
+          <article class="step">
+            <div class="num"></div>
+            <div>
+              <div class="step-h"><h3>Instalar</h3><span class="titulo">una sola vez</span></div>
+              <p>Se necesita <b>Node 18 o superior</b> (nodejs.org). Luego, en la carpeta:</p>
+              <figure class="code">
+                <figcaption><span class="f">PowerShell</span><span>instalación</span></figcaption>
+<pre>npm install
+npx playwright install chromium</pre>
+              </figure>
+            </div>
+          </article>
+
+          <article class="step">
+            <div class="num"></div>
+            <div>
+              <div class="step-h"><h3>Poner la matriz</h3></div>
+              <p>Copiar el <b>.xlsm</b> del QA líder dentro de <code>matrices/</code>, sin
+                cambiarle el nombre.</p>
+            </div>
+          </article>
+
+          <article class="step">
+            <div class="num"></div>
+            <div>
+              <div class="step-h"><h3>Elegir qué correr</h3></div>
+              <p>Editando <code>correos.txt</code> (un caso por renglón) o desde la terminal con la
+                variable <code>QA_CORREOS</code>. Si la matriz tiene varias hojas que comparten
+                correos, se acota la hoja con el renglón <code>hoja: Calculo</code> o con
+                <code>QA_HOJA</code>.</p>
+              <figure class="code">
+                <figcaption><span class="f">correos.txt · o PowerShell</span><span>casos a correr</span></figcaption>
+<pre><span class="cm"># correos.txt — un caso por renglón</span>
+7
+20-25
+pruebas_test_obu_012@gmail.com
+
+<span class="cm"># o sin tocar el archivo:</span>
+$env:QA_CORREOS=<span class="st">"7, 12, 20-25"</span></pre>
+              </figure>
+            </div>
+          </article>
+
+          <article class="step corte">
+            <div class="num"></div>
+            <div>
+              <div class="step-h"><h3>Correr</h3></div>
+              <p>Un comando por spec. Se abre el navegador y el formulario se llena solo; al
+                aparecer el calendario, <b>la cita se agenda a mano</b> y al cerrar la ventana
+                termina la prueba.</p>
+              <figure class="code">
+                <figcaption><span class="f">PowerShell</span><span>el spec que toque</span></figcaption>
+<pre>npx playwright test ingenes_OB_Digital_Unificado.spec.js
+<span class="cm"># o el interno vertical:</span>
+npx playwright test ingenes_OB_Unificado_Vertical.spec.js</pre>
+              </figure>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===== PROBLEMAS ===== -->
+      <section id="problemas">
+        <div class="secHead"><span class="bar"></span><h2>Problemas comunes</h2></div>
+        <ul class="lista">
+          <li><b>«'npm' no se reconoce»</b> → falta instalar Node (paso 1).</li>
+          <li><b>«No hay matriz…»</b> → el <code>.xlsm</code> no está en <code>matrices/</code> (paso 2).</li>
+          <li><b>«Dime qué correr…»</b> → faltó elegir casos en <code>correos.txt</code> o <code>QA_CORREOS</code> (paso 3).</li>
+          <li><b>«… aparece en 2 sitios»</b> → el correo está en varias hojas: usar el correo completo o acotar la hoja (paso 3).</li>
+        </ul>
+      </section>
+
+      <div class="footer">
+        <span>Documentación QA · basada en el estilo de Ingenes Tools</span>
+        <span>Fuente: README.md del paquete del equipo</span>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
