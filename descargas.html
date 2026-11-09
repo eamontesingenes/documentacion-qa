@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Descargas · Documentación QA — Ingenes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="doc-wrap">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="doc-side">
+    <div class="doc-brand">
+      <div class="glyph">i</div>
+      <div><b>Ingenes Tools</b><span>Documentación QA</span></div>
+    </div>
+
+    <a class="btn-mod" href="index.html"><span class="mico">⚙</span> Automatización</a>
+    <a class="btn-mod on" href="descargas.html"><span class="mico">⬇</span> Descargas</a>
+
+    <div class="seccTitle">En esta página</div>
+    <ul class="doc-toc">
+      <li><a href="#zipbase"><span class="n">—</span> Zip Base</a></li>
+      <li><a href="#specs"><span class="n">—</span> Specs</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="doc-main" id="top">
+    <header class="doc-head">
+      <div class="eyebrow"><span class="dot"></span> Documentación técnica · Descargas</div>
+      <h1>Descargas</h1>
+      <p class="lede">Lo que necesitas para correr las pruebas: el Zip Base con la carpeta lista, y
+        el spec del formulario que te toque. Descarga solo el spec que vas a usar.</p>
+    </header>
+
+    <div class="doc-body">
+
+      <!-- ===== ZIP BASE ===== -->
+      <section id="zipbase">
+        <div class="secHead"><span class="bar"></span><h2>Zip Base</h2></div>
+        <p class="secIntro">La carpeta de trabajo completa: <code>package.json</code>,
+          <code>playwright.config.js</code>, <code>correos.txt</code>, <code>helpers/</code>,
+          <code>matrices/</code> y <code>vendor/</code>. Se descomprime una vez y ahí dentro se
+          ponen la matriz y el spec. No trae specs: esos se descargan aparte, abajo.</p>
+        <a class="btnZip" href="descargas/paquete_base.zip" download>⬇ Descargar Zip Base
+          <small>.zip · 362 KB</small></a>
+      </section>
+
+      <!-- ===== SPECS ===== -->
+      <section id="specs">
+        <div class="secHead"><span class="bar"></span><h2>Specs</h2></div>
+        <p class="secIntro">Cada spec se descarga por separado, para que solo tengas el que vas a
+          correr. El archivo <code>.spec.js</code> va directo dentro de la carpeta del Zip Base
+          (junto al <code>package.json</code>). Siempre está publicada la versión más reciente.</p>
+
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+          <div class="card">
+            <h3><span class="ic">D</span> OB Digital Unificado</h3>
+            <p>El onboarding digital público (24 pantallas + código de verificación).
+              Su documentación está en <a href="digital.html">la página del Digital</a>.</p>
+            <a class="btnZip" href="https://drive.google.com/uc?export=download&amp;id=1WWjgxQOC60i-7vlJYjpPhplYY8ahcqlj">⬇ Descargar
+              <small>ingenes_OB_Digital_Unificado.spec.js</small></a>
+          </div>
+          <div class="card">
+            <h3><span class="ic">V</span> OB Unificado Vertical</h3>
+            <p>El formulario interno de los agentes (una sola página de preguntas).
+              Su documentación está en <a href="vertical.html">la página del Vertical</a>.</p>
+            <a class="btnZip" href="https://drive.google.com/uc?export=download&amp;id=1h3YO26q4yd5fGbbvjWOD9lInurzxNKOk">⬇ Descargar
+              <small>ingenes_OB_Unificado_Vertical.spec.js</small></a>
+          </div>
+        </div>
+
+        <div class="nota" style="margin-top:14px"><b>¿Y luego?</b> Con el Zip Base descomprimido,
+          la matriz en <code>matrices/</code> y tu spec junto al <code>package.json</code>, sigue
+          los pasos de <a href="index.html#correr">«Cómo se corre»</a> en la portada.</div>
+      </section>
+
+      <div class="footer">
+        <span>Dev. By Ing. Eder Montes 2026</span>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

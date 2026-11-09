@@ -183,10 +183,21 @@ html,body{margin:0;padding:0;background:var(--fondo)}
 .lista li code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);
   padding:1px 5px;border-radius:5px;color:var(--acento-ink)}
 
-/* ---- Descargas (sidebar) ---- */
-.doc-desc summary{list-style:none;cursor:pointer}
-.doc-desc summary::-webkit-details-marker{display:none}
-.doc-desc summary .flecha{float:right;font-size:11px;color:#9db4d6;transition:transform .15s}
-.doc-desc[open] summary .flecha{transform:rotate(90deg)}
-.doc-desc .doc-toc{margin:6px 0 0 6px}
-.doc-desc .doc-toc a .n{min-width:14px}
+
+/* ---- Botones de módulo (sidebar, patrón del dashboard) ---- */
+.btn-mod{display:flex;align-items:center;gap:10px;margin-top:8px;
+  padding:11px 12px;border-radius:9px;color:#dce6f4;text-decoration:none;
+  font-size:13.5px;font-weight:650;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);transition:.15s}
+.btn-mod:hover{background:rgba(255,255,255,.14)}
+.btn-mod.on{background:var(--acento);border-color:transparent;color:#fff}
+.btn-mod .mico{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.12);
+  display:grid;place-items:center;font-size:14px;flex:none}
+
+/* ---- Botón de descarga (contenido central) ---- */
+.btnZip{display:inline-flex;align-items:center;gap:9px;margin-top:12px;
+  padding:11px 20px;border-radius:10px;background:var(--acento);color:#fff;
+  text-decoration:none;font-weight:700;font-size:14.5px;box-shadow:var(--sombra);
+  transition:.15s}
+.btnZip:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btnZip small{font-weight:500;opacity:.85}
