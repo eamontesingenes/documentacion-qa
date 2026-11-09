@@ -108,6 +108,19 @@
         </div>
 
 
+        <figure class="code">
+          <figcaption><span class="f">ingenes_OB_Digital_Unificado.spec.js</span><span>el motor — loop de recorrido</span></figcaption>
+<pre><span class="kw">for</span> (<span class="kw">let</span> vuelta = <span class="nu">0</span>; vuelta &lt; <span class="nu">45</span>; vuelta++) {
+  <span class="kw">const</span> titulo = <span class="kw">await</span> <span class="fn">encabezadoActual</span>();
+  <span class="cm">// ¿es una de las 24 pantallas conocidas, aún sin atender?</span>
+  <span class="kw">let</span> pantalla = PANTALLAS.<span class="fn">find</span>((p) =&gt;
+    (TEXTOS_MEDIDOS[p.nombre].<span class="fn">some</span>(...) || p.clave.<span class="fn">test</span>(contexto)) &amp;&amp;
+    !atendidas.<span class="fn">has</span>(p.nombre));
+  <span class="kw">if</span> (pantalla) { <span class="kw">await</span> pantalla.<span class="fn">hacer</span>(); atendidas.<span class="fn">add</span>(pantalla.nombre); }
+  <span class="kw">await</span> <span class="fn">avanzarSiHaceFalta</span>(titulo);   <span class="cm">// Continuar + esperar que cambie</span>
+}</pre>
+        </figure>
+
         <div class="grid" style="margin-top:16px">
           <div class="card">
             <h3><span class="ic">◆</span> Todo queda anotado</h3>
@@ -147,6 +160,13 @@
               <p>La primera pantalla. Define <b>qué busca el paciente</b> —tener un bebé, evaluar su salud
                 o revertir una ligadura— y palomea el aviso de privacidad. Si el producto trae el sexo
                 fusionado en esta misma pantalla, también lo contesta aquí.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS[0]</span><span>necesidad</span></figcaption>
+<pre>clave: <span class="rx">/como podemos ayudarte|que te trajo/</span>,
+<span class="kw">await</span> <span class="fn">aceptarConsentimiento</span>();
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'necesidad'</span>, escenario.objetivo), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -159,6 +179,14 @@
               <p>Decide el <b>sexo del paciente</b> (Mujer / Hombre) y si <b>tiene pareja y de qué sexo</b>
                 (Sin pareja / Mujer / Hombre). Importa para toda la lógica aguas abajo: la mujer es el
                 paciente principal, y una pareja del mismo sexo cambia la ruta.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · contestarSexoYPareja()</span><span>sexo y pareja</span></figcaption>
+<pre>clave: <span class="rx">/cuentanos un poco sobre ti|cual es tu sexo/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sexo'</span>, respondeHombre ? <span class="st">'Hombre#1'</span> : <span class="st">'Mujer#1'</span>, ...);
+<span class="kw">if</span> (sinPareja) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'pareja'</span>, <span class="st">'Sin pareja'</span>, ...);
+<span class="kw">else</span> ... <span class="st">'Mujer#2'</span> / <span class="st">'Hombre#2'</span>  <span class="cm">// #2 = la pareja</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -169,6 +197,12 @@
               <div class="step-h"><h3>estado civil</h3><span class="titulo">«¿Cuál es tu estado civil?»</span></div>
               <div class="chips"><span class="chip">Estado civil</span></div>
               <p>Casado / Unión libre / Otro. Un solo clic sobre la opción de la matriz.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · estado civil</span><span>estado_civil</span></figcaption>
+<pre>clave: <span class="rx">/estado civil/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'estado_civil'</span>, <span class="fn">traducir</span>(<span class="st">'civil'</span>, escenario.estado_civil), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -180,6 +214,13 @@
               <div class="chips"><span class="chip">Edad paciente</span><span class="chip">Edad pareja</span></div>
               <p>Escribe la <b>edad del paciente</b> y, si hay pareja y el segundo campo aparece, la
                 <b>edad de la pareja</b>. Son los números que alimentan los topes por edad.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · edades</span><span>edad_usuario / edad_pareja</span></figcaption>
+<pre>clave: <span class="rx">/cuantos anos tienes/</span>,
+<span class="kw">await</span> campos.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(String(escenario.edad_usuario));
+<span class="kw">if</span> (n &gt; <span class="nu">1</span> &amp;&amp; !sinPareja) <span class="kw">await</span> campos.<span class="fn">nth</span>(<span class="nu">1</span>).<span class="fn">fill</span>(...edad_pareja);</pre>
+              </figure>
             </div>
           </article>
 
@@ -191,6 +232,13 @@
               <div class="chips"><span class="chip">Hijos paciente</span><span class="chip sec">Hijos pareja (espejo)</span></div>
               <p>Cuántos hijos tiene el paciente y, en espejo, los de la pareja. La prueba detecta si la
                 pantalla pregunta por el paciente, por la pareja o por ambos, y contesta lo que aplique.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · hijos</span><span>hijos + hijos (pareja)</span></figcaption>
+<pre>clave: <span class="rx">/sobre tu familia|ya eres (mama|papa)/</span>,
+<span class="kw">if</span> (!soloPareja) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, ...), ...);
+<span class="cm">// [espejo] hijos de la pareja repite la columna hijos</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -202,6 +250,13 @@
               <div class="chips"><span class="chip">Ligadura</span></div>
               <p>Si la paciente <b>está operada</b> de las trompas. Si al responder «sí» el producto revela
                 la pantalla de reversión/FIV, la prueba la contesta enseguida con su respuesta fija.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · trompas</span><span>operada → trompasOpt</span></figcaption>
+<pre>clave: <span class="rx">/trompas ligadas/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'operada'</span>, <span class="fn">traducir</span>(<span class="st">'trompas'</span>, escenario.operada), ...);
+<span class="cm">// [misma pantalla] reversion/FIV revelada tras la ligadura</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -226,6 +281,13 @@
               <div class="chips"><span class="chip">Pérdidas</span></div>
               <p>Número de pérdidas: ninguno / una / dos / tres o más. Si la hoja no trae el dato, usa el
                 valor por defecto.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · embarazos</span><span>embarazos</span></figcaption>
+<pre>clave: <span class="rx">/embarazos que no llegaron/</span>,
+<span class="kw">if</span> (crudo !== <span class="st">''</span>) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, <span class="fn">traducir</span>(<span class="st">'embarazos'</span>, crudo), ...);
+<span class="kw">else</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, RESPUESTAS_POR_DEFECTO.embarazos);</pre>
+              </figure>
             </div>
           </article>
 
@@ -237,6 +299,12 @@
               <div class="chips"><span class="chip">Gestación</span></div>
               <p>Si hay un <b>padecimiento que impida llevar el embarazo</b>. Es una de las señales que
                 mandan el caso hacia subrogación.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · gestacion</span><span>gestacion</span></figcaption>
+<pre>clave: <span class="rx">/impida llevar|padecimiento que/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'gestacion'</span>, <span class="fn">traducir</span>(<span class="st">'gestacion'</span>, escenario.gestacion), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -248,6 +316,12 @@
               <div class="chips"><span class="chip sec">Fijo: «No lo sé»</span></div>
               <p>Qué técnica le interesa. La prueba elige siempre <b>«No lo sé»</b>: no sesga el score con una
                 preferencia que el escenario no pide probar.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · productos</span><span>productos</span></figcaption>
+<pre>clave: <span class="rx">/interesa alguna tecnica/</span>,
+<span class="kw">const</span> puesto = <span class="kw">await</span> <span class="fn">clicarOpcion</span>(<span class="st">'No lo sé'</span>, <span class="nu">1</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -258,6 +332,11 @@
               <div class="step-h"><h3>tiempo buscando</h3><span class="titulo">«¿Hace cuánto buscas el embarazo?»</span></div>
               <div class="chips"><span class="chip">Tiempo buscando</span></div>
               <p>Hace cuánto busca el embarazo (menos de 6 meses, 6 m–1 año, 1–5 años, más de 5).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · tiempo buscando</span><span>firma: Menos de 6 meses…</span></figcaption>
+<pre>clave: <span class="rx">/hace cuanto busca|hace cuanto quiere(s|n) ser/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -268,6 +347,11 @@
               <div class="step-h"><h3>tratamientos</h3><span class="titulo">«¿Tratamientos de reproducción asistida?»</span></div>
               <div class="chips"><span class="chip">Tratamientos previos</span></div>
               <p>Qué tratamientos ha hecho: FIV, inseminaciones, medicamentos para ovular.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · tratamientos</span><span>tratamientos</span></figcaption>
+<pre>clave: <span class="rx">/tratamiento de reproduccion asistida/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -278,6 +362,11 @@
               <div class="step-h"><h3>ciclos</h3><span class="titulo">«¿Cuántos ciclos?»</span></div>
               <div class="chips"><span class="chip">Ciclos previos</span></div>
               <p>Cuántos ciclos de tratamiento lleva. Aparece solo si antes declaró tratamientos.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · ciclos</span><span>ciclos</span></figcaption>
+<pre>clave: <span class="rx">/cuantos ciclos/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -288,6 +377,11 @@
               <div class="step-h"><h3>tiempo bebé</h3><span class="titulo">«¿En cuánto tiempo te gustaría?»</span></div>
               <div class="chips"><span class="chip">Urgencia</span></div>
               <p>En cuánto tiempo quiere al bebé (lo antes posible, en 1–2 años, más adelante).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · tiempo bebe</span><span>firma: antes posible…</span></figcaption>
+<pre>clave: <span class="rx">/en cuanto tiempo (les|te) gustaria/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -298,6 +392,11 @@
               <div class="step-h"><h3>informativa</h3><span class="titulo">«Llegaste al lugar correcto»</span></div>
               <div class="chips"><span class="chip sec">Solo avanza</span></div>
               <p>Pantalla de transición, sin preguntas. La prueba solo pulsa Continuar.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · informativa</span><span>sin hacer()</span></figcaption>
+<pre>clave: <span class="rx">/llegaste al lugar correcto|estamos muy cerca/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -308,6 +407,11 @@
               <div class="step-h"><h3>motivo</h3><span class="titulo">«¿Cómo quieres continuar?»</span></div>
               <div class="chips"><span class="chip">Motivo de contacto</span></div>
               <p>Por qué quiere contacto: segunda opinión, sigue investigando, quiere un especialista.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · motivo</span><span>firma: segunda opinión…</span></figcaption>
+<pre>clave: <span class="rx">/como quieres continuar/</span>,</pre>
+              </figure>
             </div>
           </article>
 
@@ -320,6 +424,16 @@
               <p>Los <b>datos de contacto</b>: nombre, apellido paterno, apellido materno (fijo «QA»),
                 correo, la <b>lada</b> —que define el país del teléfono— y el teléfono. La prueba avisa si el
                 teléfono no trae 10 dígitos: sin eso el producto no deja pasar de esta pantalla.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · contacto</span><span>nombre · correo · lada · teléfono</span></figcaption>
+<pre>clave: <span class="rx">/datos de contacto|revise tu caso|para seguir en contacto/</span>,
+<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[placeholder*="nombre"]'</span>, <span class="st">'nombre'</span>, escenario.nombre);
+<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[type="email"]'</span>, <span class="st">'correo'</span>, escenario.correo);
+<span class="cm">// lada: empareja la opción del select por texto o por dígitos</span>
+<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[type="tel"]'</span>, <span class="st">'telefono'</span>, escenario.telefono);
+<span class="kw">if</span> (_digTel.length !== <span class="nu">10</span>) <span class="fn">logVivo</span>(<span class="st">'⚠ TELÉFONO INVÁLIDO...'</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -331,6 +445,13 @@
               <div class="chips"><span class="chip">País</span><span class="chip">Código postal</span></div>
               <p>País de residencia y <b>código postal</b>. Son decisivos para la clasificación
                 <b>nacional / internacional</b>, que define la columna de score (Total MX vs. Total USA).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · pais</span><span>pais → cp</span></figcaption>
+<pre>clave: <span class="rx">/en que pais vives/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'pais'</span>, escenario.pais), ...);
+<span class="kw">await</span> inputCp.<span class="fn">fill</span>(cp);  <span class="cm">// el CP aparece tras elegir el país</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -342,6 +463,14 @@
               <div class="chips"><span class="chip">Ruta de atención</span></div>
               <p>Bifurca según dónde atiende: sucursal en <b>Estados Unidos</b>, en <b>México</b>, o pedir
                 <b>orientación</b> si el escenario no trae sucursal.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · camino (fuera de MX)</span><span>ruta por sucursal</span></figcaption>
+<pre>clave: <span class="rx">/coordinar tu atencion|desde que sucursal/</span>,
+<span class="kw">if</span> (SUCURSALES_EEUU.<span class="fn">test</span>(s)) <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'Estados Unidos'</span>, ...);
+<span class="kw">else if</span> (s !== <span class="st">'sin sucursal'</span>) <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'México'</span>, ...);
+<span class="kw">else</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'orient'</span>, ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -353,6 +482,14 @@
               <div class="chips"><span class="chip">Sucursal</span></div>
               <p>Elige la <b>sucursal</b> del escenario usando el buscador. Si esa no está disponible, toma
                 una sucursal MX al azar (regla del CP del noreste de USA), y lo deja anotado.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · sucursal</span><span>buscador + fallback MX</span></figcaption>
+<pre>clave: <span class="rx">/que sucursal te (conviene|queda)|cual es la sucursal/</span>,
+<span class="kw">await</span> buscador.<span class="fn">fill</span>(buscada);
+<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sucursal'</span>, buscada, ...)) <span class="kw">return</span>;
+<span class="cm">// si no aparece: una MX al azar, anotada como "(aleatoria por regla)"</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -364,6 +501,13 @@
               <div class="chips"><span class="chip">Texto libre</span></div>
               <p>El <b>cuadro de texto libre</b>. Si la matriz trae texto (columna CW), lo usa y lo compara; si
                 no, inventa una historia aleatoria para no dejarlo vacío.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · pregunta abierta</span><span>abierta (matriz CW / aleatoria)</span></figcaption>
+<pre>clave: <span class="rx">/por que crees que requieres/</span>,
+<span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();  <span class="cm">// matriz CW, o aleatoria</span>
+<span class="kw">await</span> ta.<span class="fn">fill</span>(historia);</pre>
+              </figure>
             </div>
           </article>
 
@@ -375,6 +519,12 @@
               <div class="chips"><span class="chip">Recomendado</span></div>
               <p>Si el lead llegó <b>recomendado</b> (por su cuenta / amigo o familiar / doctor). En USA, un
                 recomendado resta 6 puntos al score. Si hay campo de nombre en la misma pantalla, lo llena.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · recomendacion</span><span>recomendacion</span></figcaption>
+<pre>clave: <span class="rx">/alguien te recomendo/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'recomendacion'</span>, <span class="fn">traducir</span>(<span class="st">'recom'</span>, escenario.recomendacion), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -386,6 +536,12 @@
               <div class="chips"><span class="chip sec">Fijo: «Dr. Test Prueba»</span></div>
               <p>El nombre de quien recomendó, en su propia pantalla. La prueba pone
                 siempre el mismo nombre de prueba («Dr. Test Prueba»).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · recom_name</span><span>#recom-name</span></figcaption>
+<pre>clave: <span class="rx">/como se llama quien te recomendo|nombre de quien/</span>,
+<span class="kw">await</span> campo.<span class="fn">fill</span>(<span class="st">'Dr. Test Prueba'</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -397,6 +553,12 @@
               <div class="chips"><span class="chip">Canal</span></div>
               <p>El canal por el que conoció Ingenes (Google, redes, evento, IA…). Solo se pregunta a quien
                 <b>no</b> llegó recomendado; en la matriz, «Otro» es el equivalente de «no recomendado».</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">PANTALLAS · conociste</span><span>como_nos_conociste</span></figcaption>
+<pre>clave: <span class="rx">/como nos conociste/</span>,
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'como_nos_conociste'</span>, <span class="fn">traducir</span>(<span class="st">'conociste'</span>, crudo), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -421,6 +583,13 @@
               automático; de ahí en adelante (cita, calendario) lo toma el QA.</p>
           </div>
         </div>
+              <figure class="code">
+          <figcaption><span class="f">el motor · bloque OTP</span><span>teclear → verificar</span></figcaption>
+<pre><span class="kw">if</span> (<span class="kw">await</span> <span class="fn">llenarOTP</span>()) {            <span class="cm">// teclea / autollena</span>
+  <span class="kw">await</span> <span class="fn">verificarOTP</span>();            <span class="cm">// pulsa Verificar</span>
+  <span class="kw">break</span>;                           <span class="cm">// fin del llenado automático</span>
+}</pre>
+        </figure>
       </section>
 
       <div class="footer">

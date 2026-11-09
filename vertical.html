@@ -114,6 +114,22 @@
         </div>
 
 
+        <figure class="code">
+          <figcaption><span class="f">ingenes_OB_Unificado_Vertical.spec.js</span><span>opcion() — contestar y verificar</span></figcaption>
+<pre><span class="kw">const</span> <span class="fn">opcion</span> = <span class="kw">async</span> (id, campo, textoOpcion, esperado) =&gt; {
+  <span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">bloqueVisible</span>(id))) {      <span class="cm">// no está: condicional, no error</span>
+    <span class="fn">dato</span>(campo, esperado, <span class="st">'(bloque no aparecio: condicional)'</span>);
+    <span class="kw">return</span> <span class="kw">false</span>;
+  }
+  <span class="kw">for</span> (<span class="kw">let</span> intento = <span class="nu">0</span>; intento &lt; <span class="nu">3</span>; intento++) {
+    <span class="kw">const</span> op = page.<span class="fn">locator</span>(<span class="st">`#pq-${id} .op`</span>).<span class="fn">filter</span>({ hasText: <span class="fn">regexOpcion</span>(textoOpcion) });
+    <span class="kw">await</span> op.<span class="fn">click</span>();
+    <span class="kw">if</span> (<span class="kw">await</span> <span class="fn">quedoLista</span>(id)) { <span class="fn">dato</span>(campo, esperado, puesto); <span class="kw">return</span> <span class="kw">true</span>; }
+  }
+  <span class="kw">await</span> <span class="fn">volcarPendientes</span>(<span class="st">`opcion no encontrada: ${id}`</span>);  <span class="cm">// qué quedó sin contestar</span>
+};</pre>
+        </figure>
+
         <div class="grid" style="margin-top:16px">
           <div class="card">
             <h3><span class="ic">◆</span> Entra sola</h3>
@@ -159,6 +175,13 @@
               <div class="chips"><span class="chip">Nombre</span><span class="chip">Apellido</span><span class="chip sec">Materno: fijo «QA»</span></div>
               <p>Los tres primeros inputs. Nombre y apellido vienen de la matriz; el <b>apellido
                 materno no viene</b> y se llena con «QA» (o lo que traiga la columna si existe).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 1</span><span>name · apellido · apellidoMaterno</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'name'</span>, <span class="st">'nombre'</span>, escenario.nombre);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellido'</span>, <span class="st">'apellido'</span>, escenario.apellido);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellidoMaterno'</span>, <span class="st">'apellido_materno'</span>, ... || <span class="st">'QA'</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -183,6 +206,16 @@
                 buscador de ladas, según qué control monte el producto); si es MX o no viene, se
                 se queda el +52 de México. Luego escribe el teléfono y marca la casilla de
                 <b>teléfono validado</b> si existe.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 1 · teléfono</span><span>lada → teléfono → casilla</span></figcaption>
+<pre><span class="kw">if</span> (lada &amp;&amp; !<span class="rx">/mexico|mx|\+?52/i</span>.<span class="fn">test</span>(lada)) {
+  <span class="cm">// select: empareja la opción por texto o por dígitos (+1, +34…)</span>
+  <span class="cm">// buscador: teclea el país y pulsa la opción que coincide</span>
+}
+<span class="kw">await</span> inputTelefono.<span class="fn">fill</span>(String(escenario.telefono));
+<span class="kw">await</span> casillaValidado.<span class="fn">check</span>();  <span class="cm">// si el producto la ofrece</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -200,6 +233,11 @@
               <div class="chips"><span class="chip">Objetivo</span></div>
               <p>Qué busca el paciente: tener un bebé o evaluar su salud reproductiva. Es la que
                 abre el cuestionario.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>need</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'need'</span>, <span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'need'</span>, escenario.objetivo || <span class="st">'bebe'</span>), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -212,6 +250,12 @@
               <p>El <b>sexo del paciente</b> y si <b>tiene pareja y de qué sexo</b> (Mujer / Hombre /
                 Sin pareja). «Sin pareja» (o la columna vacía) apaga todos los bloques de pareja:
                 estado civil, edad de la pareja, hijos espejo y filiación de la pareja.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>sex · partner</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sex'</span>, <span class="st">'sexo'</span>, <span class="fn">traducir</span>(<span class="st">'sex'</span>, escenario.sexo), ...);
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'partner'</span>, <span class="st">'pareja'</span>, <span class="fn">traducir</span>(<span class="st">'partner'</span>, escenario.pareja || <span class="st">'Sin pareja'</span>), ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -244,6 +288,13 @@
               <div class="chips"><span class="chip">Hijos</span><span class="chip sec">Pareja: espejo</span></div>
               <p>Cuántos hijos tiene el paciente. Los de la pareja <b>repiten la misma columna</b>
                 de la matriz (espejo): no hay columna aparte para los hijos de la pareja.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>hijosSelf · hijosPartner (espejo)</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosSelf'</span>, <span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, escenario.hijos ?? <span class="nu">0</span>), ...);
+<span class="cm">// [espejo] hijosPartner repite la columna `hijos` de la matriz</span>
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosPartner'</span>, <span class="st">'hijos (pareja, espejo)'</span>, ...);</pre>
+              </figure>
             </div>
           </article>
 
@@ -292,6 +343,12 @@
               <p>Qué técnica tiene en mente. La prueba marca siempre <b>«No / No lo sé»</b> para no
                 sesgar el score, y en el campo abierto de «¿cuál?» escribe una frase
                 aleatoria del catálogo (regla del QA: que no quede vacío).</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>productos · prodOther</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">opcionMulti</span>(<span class="st">'productos'</span>, <span class="st">'productos'</span>, <span class="st">'No / No lo se'</span>);
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'prodOther'</span>, <span class="st">'prodOther'</span>, <span class="fn">fraseProductoQA</span>());  <span class="cm">// aleatoria, se anota</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -315,6 +372,13 @@
                 inseminaciones, 2 = medicamentos, 3 = ninguno). El código 4 (cirugías) no existe en
                 este formulario y <b>cae en «Ninguno»</b>, avisándolo. Si declaró tratamientos y el
                 formulario destapa «¿cuántos ciclos?», responde «1 ciclo».</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>txPrevios · ciclos</span></figcaption>
+<pre><span class="kw">if</span> (codigoTx === <span class="st">'4'</span>) <span class="cm">// Cirugias no existe aqui -> Ninguno (avisado)</span>
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'txPrevios'</span>, <span class="st">'tratamientos'</span>, <span class="fn">traducir</span>(<span class="st">'txPrevios'</span>, codigoTx), ...);
+<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'ciclos'</span>)) <span class="fn">opcion</span>(<span class="st">'ciclos'</span>, <span class="st">'ciclos'</span>, <span class="st">'1 ciclo'</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -338,6 +402,12 @@
               <p>El textarea abierto. Si la matriz trae texto, lo usa; si no, elige una <b>historia
                 aleatoria</b> de un catálogo con tres niveles de intención (poca / mediana / mucha),
                 y anota cuál tocó.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>abierta (matriz o aleatoria)</span></figcaption>
+<pre><span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();  <span class="cm">// escenario.abierta, o aleatoria por nivel de intención</span>
+<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'abierta'</span>, <span class="st">'abierta'</span>, historia, <span class="st">'textarea'</span>);</pre>
+              </figure>
             </div>
           </article>
 
@@ -365,6 +435,13 @@
                 orientación». El CP se escribe con un reintento (el bloque se monta tarde tras
                 elegir el país); aquí es opcional, pero <b>pesa en el NSE del score</b>, así que al
                 final de la corrida se verifica que no haya quedado vacío.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2</span><span>country → camino (derivado) → cp</span></figcaption>
+<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'country'</span>, <span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'country'</span>, escenario.pais || <span class="st">'Mexico'</span>), ...);
+<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'camino'</span>, haySucursal ? <span class="st">'En una sucursal'</span> : <span class="st">'Necesito orientacion'</span>);
+<span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'cp'</span>, <span class="st">'cp'</span>, cpEsperado))) { <span class="cm">// reintento: se monta tarde</span> }</pre>
+              </figure>
             </div>
           </article>
 
@@ -378,6 +455,13 @@
                 (Irvine/Orange County → «Orange County», Houston → «Houston», «mexico» a secas →
                 «Ciudad de México»). Si el escenario <b>no trae sucursal, no se elige nada</b>: la
                 agenda queda bloqueada hasta que el QA decida.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 2 · sucursal</span><span>select por catálogo</span></figcaption>
+<pre><span class="kw">const</span> op = opciones.<span class="fn">find</span>((o) =&gt; <span class="fn">sinAcentos</span>(o.texto).<span class="fn">includes</span>(<span class="fn">sinAcentos</span>(sucursalBuscada)));
+<span class="kw">if</span> (op) <span class="kw">await</span> sel.<span class="fn">selectOption</span>(op.value);
+<span class="cm">// sin sucursal en el escenario: NO se elige (la decide el QA)</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -398,6 +482,12 @@
                 nunca se habilita, sigue sin pulsarlo y lo avisa. Si al guardar aparece el
                 aviso de <b>caso existente</b>, pulsa la tarjeta «Infunnel» para recuperar el caso
                 y continuar.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 3</span><span>guardar caso + dedupe</span></figcaption>
+<pre><span class="kw">await</span> boton.<span class="fn">click</span>();                 <span class="cm">// «Guardar caso»: destapa Lead Completo</span>
+<span class="kw">await</span> <span class="fn">manejarDedupeTrasGuardar</span>();    <span class="cm">// caso existente: clic en la tarjeta Infunnel</span></pre>
+              </figure>
             </div>
           </article>
 
@@ -466,6 +556,13 @@
               <p>Nombre y apellido (los del escenario) y la <b>fecha de nacimiento derivada</b>:
                 01/01 del año que resulta de restar la edad al año en curso. Así la edad clínica
                 coincide con la del cuestionario.</p>
+            
+              <figure class="code">
+                <figcaption><span class="f">etapa 4</span><span>filSelf — fecha desde la edad</span></figcaption>
+<pre><span class="kw">const</span> f = <span class="fn">fechaDesdeEdad</span>(escenario.edad_usuario);  <span class="cm">// 01/01/(año − edad)</span>
+<span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(escenario.nombre);
+<span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">3</span>).<span class="fn">fill</span>(f.dia); ... f.mes ... f.anio;</pre>
+              </figure>
             </div>
           </article>
 
