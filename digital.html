@@ -30,6 +30,7 @@
     <div class="seccTitle">En este spec</div>
     <ul class="doc-toc">
       <li><a href="#motor"><span class="n">—</span> Cómo funciona</a></li>
+      <li><a href="#detiene"><span class="n">—</span> Si se detiene</a></li>
       <li><a href="#recorrido"><span class="n">—</span> El recorrido</a></li>
       <li><a class="mt" href="#p1"><span class="n">01</span> necesidad</a></li>
       <li><a href="#p2"><span class="n">02</span> sexo y pareja</a></li>
@@ -118,18 +119,49 @@
 
 
         <figure class="code">
-          <figcaption><span class="f">ingenes_OB_Digital_Unificado.spec.js</span><span>el motor — loop de recorrido</span></figcaption>
-<pre><span class="kw">for</span> (<span class="kw">let</span> vuelta = <span class="nu">0</span>; vuelta &lt; <span class="nu">45</span>; vuelta++) {
-  <span class="kw">const</span> titulo = <span class="kw">await</span> <span class="fn">encabezadoActual</span>();
-  <span class="cm">// ¿es una de las 24 pantallas conocidas, aún sin atender?</span>
-  <span class="kw">let</span> pantalla = PANTALLAS.<span class="fn">find</span>((p) =&gt;
-    (TEXTOS_MEDIDOS[p.nombre].<span class="fn">some</span>(...) || p.clave.<span class="fn">test</span>(contexto)) &amp;&amp;
-    !atendidas.<span class="fn">has</span>(p.nombre));
-  <span class="kw">if</span> (pantalla) { <span class="kw">await</span> pantalla.<span class="fn">hacer</span>(); atendidas.<span class="fn">add</span>(pantalla.nombre); }
-  <span class="kw">await</span> <span class="fn">avanzarSiHaceFalta</span>(titulo);   <span class="cm">// Continuar + esperar que cambie</span>
-}</pre>
-        </figure>
+                <figcaption><span class="f">el spec · el recorrido</span><span>Ctrl+F: for (let vuelta</span></figcaption>
+<pre>for (let vuelta = 0; vuelta &lt; 45; vuelta++) {
+  if (page.isClosed()) { console.log('&gt;&gt;&gt; Ventana cerrada: se corta el recorrido.'); break; }
+  const titulo = await encabezadoActual();
+  const contexto = sinAcentos(titulo + ' ' + await page.evaluate(() =&gt; document.body.innerText.replace(/\s+/g, ' ').slice(0, 300)).catch(() =&gt; ''));
+// …</pre>
+              </figure>
 
+      </section>
+
+      <!-- ===== SI SE DETIENE ===== -->
+      <section id="detiene">
+        <div class="secHead"><span class="bar" style="background:var(--nota)"></span><h2>Si la prueba se detiene en una pantalla</h2></div>
+        <p class="secIntro">Casi siempre es porque el producto <b>cambió un texto</b>. La prueba
+          trabaja leyendo los textos de la pantalla, así que cada fragmento de esta página te dice
+          exactamente qué textos usa ahí. Compáralos con lo que ves en el navegador: el que ya no
+          coincida es el que la detuvo.</p>
+
+        <div class="grid">
+          <div class="card">
+            <h3><span class="ic">a</span> <code>clave:</code> — el título</h3>
+            <p>Es el título con el que la prueba <b>reconoce</b> la pantalla. Si en el navegador el
+              título ya no dice eso (lo cambiaron de redacción), la prueba no sabe qué pantalla
+              tiene enfrente. Revisa: ¿el título de la pantalla sigue diciendo lo del fragmento?</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">b</span> <code>firma:</code> — las opciones</h3>
+            <p>Son textos de las opciones que confirman la pantalla. Si el producto cambió una —
+              ayer decía <b>«evaluar mi salud»</b> y hoy dice <b>«Quiero evaluar mi salud»</b> —
+              esa parte ya no coincide. Revisa: ¿las opciones siguen diciendo exactamente eso?</p>
+          </div>
+          <div class="card">
+            <h3><span class="ic">c</span> <code>opcion('…')</code> — lo que pulsa</h3>
+            <p>La prueba pulsa las opciones <b>por su texto</b>. Si la opción cambió de redacción,
+              el clic no encuentra qué pulsar y el registro anota «no se pudo seleccionar».
+              Revisa: ¿el texto que la prueba intenta pulsar existe tal cual en la pantalla?</p>
+          </div>
+        </div>
+
+        <div class="nota" style="margin-top:14px"><b>Qué hacer:</b> apunta el título exacto que ves
+          en el navegador y el texto que ya no coincide, y repórtalo al QA líder para actualizar el
+          spec. La prueba, además, te ayuda: deja el navegador abierto donde se detuvo y escribe en
+          su registro el título que no reconoció.</div>
       </section>
 
       <!-- ===== EL RECORRIDO ===== -->
@@ -155,10 +187,15 @@
                 fusionado en esta misma pantalla, también lo contesta aquí.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS[0]</span><span>necesidad</span></figcaption>
-<pre>clave: <span class="rx">/como podemos ayudarte|que te trajo/</span>,
-<span class="kw">await</span> <span class="fn">aceptarConsentimiento</span>();
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'necesidad'</span>, escenario.objetivo), ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'necesidad'</span></figcaption>
+<pre>clave: /como podemos ayudarte|que te trajo/, nombre: 'necesidad',
+firma: ['Quiero tener un bebé', 'evaluar mi salud', 'ligadura de trompas'],
+hacer: async () =&gt; {
+  await aceptarConsentimiento();
+  await opcion('objetivo', traducir('necesidad', escenario.objetivo || 'bebe'), escenario.objetivo);
+
+  await page.waitForTimeout(600);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -174,11 +211,11 @@
                 paciente principal, y una pareja del mismo sexo cambia la ruta.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · contestarSexoYPareja()</span><span>sexo y pareja</span></figcaption>
-<pre>clave: <span class="rx">/cuentanos un poco sobre ti|cual es tu sexo/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sexo'</span>, respondeHombre ? <span class="st">'Hombre#1'</span> : <span class="st">'Mujer#1'</span>, ...);
-<span class="kw">if</span> (sinPareja) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'pareja'</span>, <span class="st">'Sin pareja'</span>, ...);
-<span class="kw">else</span> ... <span class="st">'Mujer#2'</span> / <span class="st">'Hombre#2'</span>  <span class="cm">// #2 = la pareja</span></pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'sexo y pareja'</span></figcaption>
+<pre>  clave: /cuentanos un poco sobre ti|cual es tu sexo/, nombre: 'sexo y pareja',
+  firma: ['Mujer', 'Hombre', 'Sin pareja'],
+  hacer: async () =&gt; contestarSexoYPareja()
+},</pre>
               </figure>
             </div>
           </article>
@@ -192,9 +229,11 @@
               <p>Casado / Unión libre / Otro. Un solo clic sobre la opción de la matriz.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · estado civil</span><span>estado_civil</span></figcaption>
-<pre>clave: <span class="rx">/estado civil/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'estado_civil'</span>, <span class="fn">traducir</span>(<span class="st">'civil'</span>, escenario.estado_civil), ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'estado civil'</span></figcaption>
+<pre>  clave: /estado civil/, nombre: 'estado civil',
+  firma: ['Casad', 'Unión libre'],
+  hacer: async () =&gt; opcion('estado_civil', traducir('civil', escenario.estado_civil || 'Otro'), escenario.estado_civil)
+},</pre>
               </figure>
             </div>
           </article>
@@ -209,10 +248,15 @@
                 <b>edad de la pareja</b>. Son los números que alimentan los topes por edad.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · edades</span><span>edad_usuario / edad_pareja</span></figcaption>
-<pre>clave: <span class="rx">/cuantos anos tienes/</span>,
-<span class="kw">await</span> campos.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(String(escenario.edad_usuario));
-<span class="kw">if</span> (n &gt; <span class="nu">1</span> &amp;&amp; !sinPareja) <span class="kw">await</span> campos.<span class="fn">nth</span>(<span class="nu">1</span>).<span class="fn">fill</span>(...edad_pareja);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'edades'</span></figcaption>
+<pre>clave: /cuantos anos tienes/, nombre: 'edades',
+hacer: async () =&gt; {
+
+  const campos = page.locator('input[inputmode="numeric"]:visible, input[placeholder="35"]:visible');
+  const n = await campos.count();
+  await campos.nth(0).fill(String(escenario.edad_usuario || 30));
+  dato('edad_usuario', escenario.edad_usuario, String(escenario.edad_usuario || 30));
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -227,10 +271,15 @@
                 pantalla pregunta por el paciente, por la pareja o por ambos, y contesta lo que aplique.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · hijos</span><span>hijos + hijos (pareja)</span></figcaption>
-<pre>clave: <span class="rx">/sobre tu familia|ya eres (mama|papa)/</span>,
-<span class="kw">if</span> (!soloPareja) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, ...), ...);
-<span class="cm">// [espejo] hijos de la pareja repite la columna hijos</span></pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'hijos'</span></figcaption>
+<pre>clave: /sobre tu familia|ya eres (mama|papa)|ya es (papa|mama)/, nombre: 'hijos',
+firma: ['1 hijo', '2 hijos', '3 o más'],
+hacer: async () =&gt; {
+
+  const cuerpo = sinAcentos(await page.evaluate(() =&gt; document.body.innerText).catch(() =&gt; ''));
+  const haySelf = /ya eres (mama|papa)|no soy (mama|papa)/.test(cuerpo);
+  const hayPareja = /(ya|no) es (papa|mama)|tiene \d+ hijo/.test(cuerpo);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -245,10 +294,15 @@
                 la pantalla de reversión/FIV, la prueba la contesta enseguida con su respuesta fija.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · trompas</span><span>operada → trompasOpt</span></figcaption>
-<pre>clave: <span class="rx">/trompas ligadas/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'operada'</span>, <span class="fn">traducir</span>(<span class="st">'trompas'</span>, escenario.operada), ...);
-<span class="cm">// [misma pantalla] reversion/FIV revelada tras la ligadura</span></pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'trompas'</span></figcaption>
+<pre>clave: /trompas ligadas/, nombre: 'trompas',
+hacer: async () =&gt; {
+  await opcion('operada', traducir('trompas', escenario.operada ?? 0), escenario.operada);
+
+  await page.waitForTimeout(700);
+  const cuerpo = sinAcentos(await page.evaluate(() =&gt; document.body.innerText).catch(() =&gt; ''));
+  if (cuerpo.includes('reversion') || cuerpo.includes('fecundacion in vitro sin')) {
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -263,6 +317,15 @@
                 siempre lo mismo («No lo sé»), porque no es parte del caso a probar.</p>
               <div class="nota"><b>Ojo:</b> esta respuesta es fija de la prueba, no un dato de la matriz. Si un
                 reporte lo marca, es ruido esperado.</div>
+              <figure class="code">
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'trompasOpt'</span></figcaption>
+<pre>  clave: /reversion|fecundacion in vitro sin/, nombre: 'trompasOpt',
+  hacer: async () =&gt; {
+    console.log('      [default] trompasOpt no viene de la matriz.');
+    await opcion('trompasOpt', RESPUESTAS_POR_DEFECTO.trompasOpt);
+  }
+},</pre>
+              </figure>
             </div>
           </article>
 
@@ -276,10 +339,15 @@
                 valor por defecto.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · embarazos</span><span>embarazos</span></figcaption>
-<pre>clave: <span class="rx">/embarazos que no llegaron/</span>,
-<span class="kw">if</span> (crudo !== <span class="st">''</span>) <span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, <span class="fn">traducir</span>(<span class="st">'embarazos'</span>, crudo), ...);
-<span class="kw">else</span> <span class="fn">opcion</span>(<span class="st">'embarazos'</span>, RESPUESTAS_POR_DEFECTO.embarazos);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'embarazos'</span></figcaption>
+<pre>clave: /embarazos que no llegaron/, nombre: 'embarazos',
+firma: ['No, ninguno', 'Una vez', 'Dos veces', 'Tres o más'],
+hacer: async () =&gt; {
+  const crudo = String(escenario.embarazos ?? '').trim();
+  if (crudo !== '') await opcion('embarazos', traducir('embarazos', crudo), crudo);
+  else { console.log('      [default] embarazos no viene en esta hoja.'); await opcion('embarazos', RESPUESTAS_POR_DEFECTO.embarazos); }
+}
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -294,9 +362,11 @@
                 mandan el caso hacia subrogación.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · gestacion</span><span>gestacion</span></figcaption>
-<pre>clave: <span class="rx">/impida llevar|padecimiento que/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'gestacion'</span>, <span class="fn">traducir</span>(<span class="st">'gestacion'</span>, escenario.gestacion), ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'gestacion'</span></figcaption>
+<pre>  clave: /impida llevar|padecimiento que/, nombre: 'gestacion',
+  firma: ['llevar', 'Necesit'],
+  hacer: async () =&gt; opcion('gestacion', traducir('gestacion', escenario.gestacion ?? 0), escenario.gestacion)
+},</pre>
               </figure>
             </div>
           </article>
@@ -311,9 +381,15 @@
                 preferencia que el escenario no pide probar.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · productos</span><span>productos</span></figcaption>
-<pre>clave: <span class="rx">/interesa alguna tecnica/</span>,
-<span class="kw">const</span> puesto = <span class="kw">await</span> <span class="fn">clicarOpcion</span>(<span class="st">'No lo sé'</span>, <span class="nu">1</span>);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'productos'</span></figcaption>
+<pre>clave: /interesa alguna tecnica/, nombre: 'productos',
+hacer: async () =&gt; {
+
+  const puesto = await clicarOpcion('No lo sé', 1).catch(() =&gt; null);
+  if (puesto) { console.log(`      productos = "${puesto.slice(0, 40)}"`); dato('productos', 'No / No lo sé', EN_INGLES ? puesto.slice(0, 40) + ' (en ingles)' : puesto.slice(0, 40)); }
+  else console.log('      productos: esta variante no ofrece "No / No lo sé"; se deja sin marcar.');
+  const frase = FRASES_PRODUCTO[Math.floor(Math.random() * FRASES_PRODUCTO.length)];
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -327,8 +403,11 @@
               <p>Hace cuánto busca el embarazo (menos de 6 meses, 6 m–1 año, 1–5 años, más de 5).</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · tiempo buscando</span><span>firma: Menos de 6 meses…</span></figcaption>
-<pre>clave: <span class="rx">/hace cuanto busca|hace cuanto quiere(s|n) ser/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tiempo buscando'</span></figcaption>
+<pre>  clave: /hace cuanto busca|hace cuanto quiere(s|n) ser/, nombre: 'tiempo buscando',
+  firma: ['Menos de 6 meses', 'De 6 meses a 1 año', 'Entre 1 y 5', 'Más de 5'],
+  hacer: async () =&gt; opcion('tiempo_buscando', traducir('busqueda', escenario.tiempo_buscando || 'Menos de 6 meses'), escenario.tiempo_buscando)
+},</pre>
               </figure>
             </div>
           </article>
@@ -342,8 +421,15 @@
               <p>Qué tratamientos ha hecho: FIV, inseminaciones, medicamentos para ovular.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · tratamientos</span><span>tratamientos</span></figcaption>
-<pre>clave: <span class="rx">/tratamiento de reproduccion asistida/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tratamientos'</span></figcaption>
+<pre>clave: /tratamiento de reproduccion asistida/, nombre: 'tratamientos',
+firma: ['Fecundación in Vitro', 'inseminaciones', 'medicamentos para ovular'],
+hacer: async () =&gt; {
+  const codigo = String(escenario.tratamientos ?? '3').trim();
+  if (codigo === '4') console.warn('      tratamientos: "4" (cirugias) no existe aqui -&gt; Ninguno.');
+
+  await opcion('tratamientos', traducir('txPrevios', codigo), `${codigo} (${traducir('txPrevios', codigo)})`);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -357,8 +443,13 @@
               <p>Cuántos ciclos de tratamiento lleva. Aparece solo si antes declaró tratamientos.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · ciclos</span><span>ciclos</span></figcaption>
-<pre>clave: <span class="rx">/cuantos ciclos/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'ciclos'</span></figcaption>
+<pre>  clave: /cuantos ciclos/, nombre: 'ciclos',
+  hacer: async () =&gt; {
+    console.log('      [default] ciclos no viene de la matriz.');
+    await opcion('ciclos', RESPUESTAS_POR_DEFECTO.ciclos + ' ciclo');
+  }
+},</pre>
               </figure>
             </div>
           </article>
@@ -372,8 +463,11 @@
               <p>En cuánto tiempo quiere al bebé (lo antes posible, en 1–2 años, más adelante).</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · tiempo bebe</span><span>firma: antes posible…</span></figcaption>
-<pre>clave: <span class="rx">/en cuanto tiempo (les|te) gustaria/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'tiempo bebe'</span></figcaption>
+<pre>  clave: /en cuanto tiempo (les|te) gustaria/, nombre: 'tiempo bebe',
+  firma: ['antes posible', 'En uno o dos', 'Más adelante'],
+  hacer: async () =&gt; opcion('tiempo_bebe', traducir('tiempoEmb', escenario.tiempo_bebe || 'Menos de 1 año'), escenario.tiempo_bebe)
+},</pre>
               </figure>
             </div>
           </article>
@@ -387,8 +481,10 @@
               <p>Pantalla de transición, sin preguntas. La prueba solo pulsa Continuar.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · informativa</span><span>sin hacer()</span></figcaption>
-<pre>clave: <span class="rx">/llegaste al lugar correcto|estamos muy cerca/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'informativa'</span></figcaption>
+<pre>  clave: /llegaste al lugar correcto|estamos muy cerca/, nombre: 'informativa',
+  hacer: async () =&gt; {  }
+},</pre>
               </figure>
             </div>
           </article>
@@ -402,8 +498,15 @@
               <p>Por qué quiere contacto: segunda opinión, sigue investigando, quiere un especialista.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · motivo</span><span>firma: segunda opinión…</span></figcaption>
-<pre>clave: <span class="rx">/como quieres continuar/</span>,</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'motivo'</span></figcaption>
+<pre>clave: /como quieres continuar/, nombre: 'motivo',
+firma: ['segunda opinión', 'investigando', 'especialista'],
+hacer: async () =&gt; {
+  const codigo = String(escenario.continuar_como ?? '').trim();
+  const querido = MOTIVO_POR_CODIGO[codigo];
+  if (!querido) console.warn(`      motivo: continuar_como=${JSON.stringify(escenario.continuar_como)} fuera de catalogo -&gt; especialista.`);
+  const ok = await opcion('continuar_como', querido || MOTIVO_POR_CODIGO[0], escenario.continuar_como);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -419,13 +522,15 @@
                 teléfono no trae 10 dígitos: sin eso el producto no deja pasar de esta pantalla.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · contacto</span><span>nombre · correo · lada · teléfono</span></figcaption>
-<pre>clave: <span class="rx">/datos de contacto|revise tu caso|para seguir en contacto/</span>,
-<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[placeholder*="nombre"]'</span>, <span class="st">'nombre'</span>, escenario.nombre);
-<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[type="email"]'</span>, <span class="st">'correo'</span>, escenario.correo);
-<span class="cm">// lada: empareja la opción del select por texto o por dígitos</span>
-<span class="kw">await</span> <span class="fn">escribir</span>(<span class="st">'input[type="tel"]'</span>, <span class="st">'telefono'</span>, escenario.telefono);
-<span class="kw">if</span> (_digTel.length !== <span class="nu">10</span>) <span class="fn">logVivo</span>(<span class="st">'⚠ TELÉFONO INVÁLIDO...'</span>);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'contacto'</span></figcaption>
+<pre>clave: /revise tu caso|segunda opinion|informacion personalizada|para seguir en contacto|datos de contacto/, nombre: 'contacto',
+hacer: async () =&gt; {
+  await escribir('input[placeholder*="nombre" i], input[placeholder*="first name" i]', 'nombre', escenario.nombre);
+  await escribir('input[placeholder*="apellido paterno" i], input[placeholder*="apellido" i], input[placeholder*="last name" i]', 'apellido', escenario.apellido);
+  const materno = page.locator('input[placeholder*="materno" i], input[placeholder*="maternal" i]').filter({ visible: true }).first();
+  if (await materno.count()) await materno.fill('QA').catch(() =&gt; {});
+  await escribir('input[placeholder*="correo" i], input[type="email"]', 'correo', escenario.correo);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -440,10 +545,15 @@
                 <b>nacional / internacional</b>, que define la columna de score (Total MX vs. Total USA).</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · pais</span><span>pais → cp</span></figcaption>
-<pre>clave: <span class="rx">/en que pais vives/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'pais'</span>, escenario.pais), ...);
-<span class="kw">await</span> inputCp.<span class="fn">fill</span>(cp);  <span class="cm">// el CP aparece tras elegir el país</span></pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'pais'</span></figcaption>
+<pre>clave: /en que pais vives/, nombre: 'pais',
+firma: ['Otro país', 'Estados Unidos'],
+hacer: async () =&gt; {
+  await opcion('pais', traducir('pais', escenario.pais || 'Mexico'), escenario.pais);
+
+  await page.waitForTimeout(800);
+  const cp = String(escenario.cp || '').trim();
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -458,11 +568,15 @@
                 <b>orientación</b> si el escenario no trae sucursal.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · camino (fuera de MX)</span><span>ruta por sucursal</span></figcaption>
-<pre>clave: <span class="rx">/coordinar tu atencion|desde que sucursal/</span>,
-<span class="kw">if</span> (SUCURSALES_EEUU.<span class="fn">test</span>(s)) <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'Estados Unidos'</span>, ...);
-<span class="kw">else if</span> (s !== <span class="st">'sin sucursal'</span>) <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'México'</span>, ...);
-<span class="kw">else</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'orient'</span>, ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'camino (fuera de MX)'</span></figcaption>
+<pre>clave: /coordinar tu atencion|desde que sucursal/, nombre: 'camino (fuera de MX)',
+firma: ['sucursal en', 'orient'],
+hacer: async () =&gt; {
+
+  const s = sinAcentos(escenario.sucursal);
+  if (s &amp;&amp; SUCURSALES_EEUU.test(s)) await opcion('camino', 'Estados Unidos', escenario.sucursal);
+  else if (s &amp;&amp; s !== 'sin sucursal') await opcion('camino', 'México', escenario.sucursal);
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -477,11 +591,15 @@
                 una sucursal MX al azar (regla del CP del noreste de USA), y lo deja anotado.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · sucursal</span><span>buscador + fallback MX</span></figcaption>
-<pre>clave: <span class="rx">/que sucursal te (conviene|queda)|cual es la sucursal/</span>,
-<span class="kw">await</span> buscador.<span class="fn">fill</span>(buscada);
-<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sucursal'</span>, buscada, ...)) <span class="kw">return</span>;
-<span class="cm">// si no aparece: una MX al azar, anotada como "(aleatoria por regla)"</span></pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'sucursal'</span></figcaption>
+<pre>clave: /que sucursal te (conviene|resultaria|queda)|en que sucursal (quieres|te gustaria)|cual es la sucursal|ubicaciones en ee/, nombre: 'sucursal',
+hacer: async () =&gt; {
+  const buscada = sucursalEnPantalla();
+  if (!buscada) { console.warn('      sucursal: el escenario no la trae; la elige el QA.'); dato('sucursal', escenario.sucursal, '(sin sucursal: la decide el QA)'); return; }
+
+  const buscador = page.locator('input[placeholder*="Buscar" i], input[placeholder*="Search" i]').filter({ visible: true }).first();
+  if (await buscador.count()) { await buscador.fill(buscada).catch(() =&gt; {}); await page.waitForTimeout(600); }
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -496,10 +614,15 @@
                 no, inventa una historia aleatoria para no dejarlo vacío.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · pregunta abierta</span><span>abierta (matriz CW / aleatoria)</span></figcaption>
-<pre>clave: <span class="rx">/por que crees que requieres/</span>,
-<span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();  <span class="cm">// matriz CW, o aleatoria</span>
-<span class="kw">await</span> ta.<span class="fn">fill</span>(historia);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'pregunta abierta'</span></figcaption>
+<pre>clave: /por que crees que requieres/, nombre: 'pregunta abierta',
+hacer: async () =&gt; {
+  const historia = textoAbiertaQA();
+  const ta = page.locator('textarea').filter({ visible: true }).first();
+  await ta.fill(historia).catch(() =&gt; {});
+  if (abiertaDeMatriz) {
+
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -514,9 +637,15 @@
                 recomendado resta 6 puntos al score. Si hay campo de nombre en la misma pantalla, lo llena.</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · recomendacion</span><span>recomendacion</span></figcaption>
-<pre>clave: <span class="rx">/alguien te recomendo/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'recomendacion'</span>, <span class="fn">traducir</span>(<span class="st">'recom'</span>, escenario.recomendacion), ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'recomendacion'</span></figcaption>
+<pre>clave: /alguien te recomendo/, nombre: 'recomendacion',
+firma: ['por mi cuenta', 'amigo o familiar', 'doctor'],
+hacer: async () =&gt; {
+  await opcion('recomendacion', traducir('recom', escenario.recomendacion || 'No'), escenario.recomendacion);
+
+  const ref = page.locator('input[placeholder*="recomend" i], input[placeholder*="nombre" i], input[placeholder*="recommend" i], input[placeholder*="last name" i]').filter({ visible: true }).first();
+  if (await ref.count()) { await ref.fill('Dr. Test Prueba').catch(() =&gt; {}); dato('recom_name', '(default)', 'Dr. Test Prueba'); }
+  // …</pre>
               </figure>
             </div>
           </article>
@@ -531,9 +660,14 @@
                 siempre el mismo nombre de prueba («Dr. Test Prueba»).</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · recom_name</span><span>#recom-name</span></figcaption>
-<pre>clave: <span class="rx">/como se llama quien te recomendo|nombre de quien/</span>,
-<span class="kw">await</span> campo.<span class="fn">fill</span>(<span class="st">'Dr. Test Prueba'</span>);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'recom_name'</span></figcaption>
+<pre>  clave: /como se llama quien te recomendo|quien te recomendo|nombre de quien/, nombre: 'recom_name',
+  firma: [],
+  hacer: async () =&gt; {
+    const campo = page.locator('#recom-name, input[placeholder*="Fernanda" i], input[placeholder*="Dra" i], input[placeholder*="nombre y apellido" i], input[placeholder*="nombre" i]').filter({ visible: true }).first();
+    if (await campo.count()) { await campo.fill('Dr. Test Prueba').catch(() =&gt; {}); dato('recom_name', 'Dr. Test Prueba (default)', 'Dr. Test Prueba'); }
+  }
+},</pre>
               </figure>
             </div>
           </article>
@@ -548,9 +682,14 @@
                 <b>no</b> llegó recomendado; en la matriz, «Otro» es el equivalente de «no recomendado».</p>
             
               <figure class="code">
-                <figcaption><span class="f">PANTALLAS · conociste</span><span>como_nos_conociste</span></figcaption>
-<pre>clave: <span class="rx">/como nos conociste/</span>,
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'como_nos_conociste'</span>, <span class="fn">traducir</span>(<span class="st">'conociste'</span>, crudo), ...);</pre>
+                <figcaption><span class="f">el spec · PANTALLAS</span><span>Ctrl+F: nombre: 'conociste'</span></figcaption>
+<pre>  clave: /como nos conociste/, nombre: 'conociste',
+  firma: ['Google', 'Evento', 'Inteligencia Artificial'],
+  hacer: async () =&gt; {
+    const crudo = String(escenario.como_nos_conociste || 'Google');
+    await opcion('como_nos_conociste', traducir('conociste', crudo), crudo);
+  }
+}</pre>
               </figure>
             </div>
           </article>
@@ -577,12 +716,13 @@
           </div>
         </div>
               <figure class="code">
-          <figcaption><span class="f">el motor · bloque OTP</span><span>teclear → verificar</span></figcaption>
-<pre><span class="kw">if</span> (<span class="kw">await</span> <span class="fn">llenarOTP</span>()) {            <span class="cm">// teclea / autollena</span>
-  <span class="kw">await</span> <span class="fn">verificarOTP</span>();            <span class="cm">// pulsa Verificar</span>
-  <span class="kw">break</span>;                           <span class="cm">// fin del llenado automático</span>
-}</pre>
-        </figure>
+                <figcaption><span class="f">el spec · bloque OTP</span><span>Ctrl+F: llenarOTP()</span></figcaption>
+<pre>if (await llenarOTP()) {
+// …
+  await verificarOTP();
+  console.log('&gt;&gt;&gt; OTP resuelto. Hasta aqui llega el llenado automatico.');
+  break;</pre>
+              </figure>
       </section>
 
       <div class="footer">
