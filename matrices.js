@@ -141,28 +141,97 @@ function matCambiarUnidad(u) {
   matRender();
 }
 
-function matExportarExcel() {
-  const filas = [
-    [MAT_FICHA.titulo],
-    ['URL a probar', MAT_FICHA.url],
-    ['Tester', MAT_FICHA.tester],
-    ['PM', MAT_FICHA.pm],
-    [],
-    ['Sección', 'Código', 'Punto a validar', 'Estado', 'Observaciones'],
-  ];
+// Arma el libro con ExcelJS: título y ficha arriba, cada sección como fila de
+// grupo (sin columna repetida), Estado con desplegable OK/WARN/FAIL y colores
+// automáticos (formato condicional) también para lo que se elija en Excel.
+function matArmarLibro() {
+  const NAVY = 'FF1F3864', GRIS = 'FFF4F6F8', BLANCO = 'FFFFFFFF';
+  const borde = { style: 'thin', color: { argb: 'FFD5DBDB' } };
+  const bordes = { top: borde, left: borde, bottom: borde, right: borde };
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Matriz de Cobertura');
+  ws.columns = [{ width: 10 }, { width: 74 }, { width: 13 }, { width: 48 }];
+
+  ws.mergeCells('A1:D1');
+  const titulo = ws.getCell('A1');
+  titulo.value = MAT_FICHA.titulo;
+  titulo.font = { bold: true, size: 16, color: { argb: BLANCO } };
+  titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY } };
+  titulo.alignment = { vertical: 'middle', horizontal: 'center' };
+  ws.getRow(1).height = 30;
+
+  [['URL a probar', MAT_FICHA.url], ['Tester', MAT_FICHA.tester], ['PM', MAT_FICHA.pm]]
+    .forEach((par, i) => {
+      const r = ws.getRow(2 + i);
+      r.getCell(1).value = par[0];
+      r.getCell(1).font = { bold: true };
+      ws.mergeCells(`B${2 + i}:D${2 + i}`);
+      r.getCell(2).value = par[1];
+    });
+
+  const hdr = ws.getRow(6);
+  ['Código', 'Punto a validar', 'Estado', 'Observaciones'].forEach((v, i) => {
+    const c = hdr.getCell(i + 1);
+    c.value = v;
+    c.font = { bold: true, color: { argb: BLANCO } };
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY } };
+    c.border = bordes;
+    c.alignment = { horizontal: i === 2 ? 'center' : 'left' };
+  });
+
+  let fila = 7;
   MATRIZ_IC_BASE.forEach((sec, si) => {
     const letra = matLetra(si);
+    ws.mergeCells(`A${fila}:D${fila}`);
+    const s = ws.getCell(`A${fila}`);
+    s.value = `${letra}. ${sec.nombre.toUpperCase()}  (${sec.puntos.length} puntos)`;
+    s.font = { bold: true, color: { argb: NAVY } };
+    s.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: GRIS } };
+    s.border = bordes;
+    fila++;
     sec.puntos.forEach((p, pi) => {
       const cod = letra + (pi + 1);
       const regla = MAT_PUNTAJE[matEstados[cod]];
-      filas.push([sec.nombre, cod, p, regla ? regla.etiqueta : '', '']);
+      const r = ws.getRow(fila);
+      r.getCell(1).value = cod;
+      r.getCell(2).value = p;
+      r.getCell(3).value = regla ? regla.etiqueta : '';
+      for (let c = 1; c <= 4; c++) r.getCell(c).border = bordes;
+      r.getCell(1).font = { size: 10, color: { argb: 'FF8A929A' } };
+      r.getCell(2).alignment = { wrapText: true };
+      r.getCell(3).alignment = { horizontal: 'center' };
+      r.getCell(3).dataValidation = {
+        type: 'list', allowBlank: true, formulae: ['"OK,WARN,FAIL"'],
+        showErrorMessage: true, errorTitle: 'Estado', error: 'Elige OK, WARN o FAIL',
+      };
+      fila++;
     });
   });
-  const hoja = XLSX.utils.aoa_to_sheet(filas);
-  hoja['!cols'] = [{ wch: 26 }, { wch: 8 }, { wch: 70 }, { wch: 10 }, { wch: 45 }];
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Fertilidad y Subrogado');
-  XLSX.writeFile(libro, 'Matriz_IC_Fertilidad_Subrogado.xlsx');
+
+  const estiloCF = (fondo, letra2) => ({
+    fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: fondo } },
+    font: { bold: true, color: { argb: letra2 } },
+  });
+  ws.addConditionalFormatting({
+    ref: `C7:C${fila - 1}`,
+    rules: [
+      { type: 'containsText', operator: 'containsText', text: 'OK', priority: 1, style: estiloCF('FFD9EAD3', 'FF1E8449') },
+      { type: 'containsText', operator: 'containsText', text: 'WARN', priority: 2, style: estiloCF('FFFCF3CF', 'FF9A6512') },
+      { type: 'containsText', operator: 'containsText', text: 'FAIL', priority: 3, style: estiloCF('FFF5D6D1', 'FFC0392B') },
+    ],
+  });
+  return wb;
+}
+
+async function matExportarExcel() {
+  const wb = matArmarLibro();
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Matriz_IC_Fertilidad_Subrogado.xlsx';
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 document.addEventListener('DOMContentLoaded', matRender);
