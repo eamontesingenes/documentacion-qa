@@ -68,13 +68,13 @@
     <header class="doc-head">
       <div class="eyebrow"><span class="dot"></span> Documentación técnica · Spec</div>
       <h1>OB Unificado Vertical</h1>
-      <p class="lede">Qué controla cada parte del spec que llena el formulario interno (vertical)
-        de los agentes, bloque por bloque y en el orden real del llenado. A diferencia del Digital,
-        aquí no hay pantallas: es una sola página de bloques que se destapan por condición, y el
-        spec la recorre en cuatro etapas.</p>
+      <p class="lede">Qué hace la prueba en el formulario interno (vertical) de los agentes, bloque
+        por bloque y en el orden real del llenado. A diferencia del Digital, aquí no hay pantallas:
+        es una sola página con todas las preguntas, que se van destapando según las respuestas, y
+        la prueba la recorre en cuatro etapas.</p>
       <div class="metarow">
         <span class="pill"><b>Archivo:</b> ingenes_OB_Unificado_Vertical.spec.js</span>
-        <span class="pill"><b>Formulario:</b> una página de bloques #pq-…</span>
+        <span class="pill"><b>Formulario:</b> una sola página de preguntas</span>
         <span class="pill"><b>Etapas:</b> filiación → cuestionario → guardar caso → agenda</span>
       </div>
     </header>
@@ -84,60 +84,41 @@
       <!-- ===== CÓMO FUNCIONA ===== -->
       <section id="motor">
         <div class="secHead"><span class="bar"></span><h2>Cómo funciona</h2></div>
-        <p class="secIntro">Cada pregunta del formulario vive en un bloque con id fijo
-          (<code>#pq-need</code>, <code>#pq-trompas</code>, <code>#pq-sucursal</code>…). El spec no
-          busca títulos de pantalla: va directo al bloque, lo contesta y verifica que de verdad
-          quedó contestado. Siempre corre en escritorio — si se pide móvil o tablet con
-          <code>QA_DISPOSITIVO</code>, lo ignora y lo avisa.</p>
+        <p class="secIntro">El formulario es una sola página larga: cada pregunta es un recuadro
+          que se destapa cuando toca. La prueba va recuadro por recuadro: lo busca, lo contesta con
+          el dato del caso y se asegura de que la respuesta de verdad quedó puesta. Siempre corre
+          en computadora de escritorio, aunque se pida móvil o tablet.</p>
 
         <div class="grid">
           <div class="card">
-            <h3><span class="ic">1</span> Busca el bloque</h3>
-            <p>Espera a que <code>#pq-&lt;id&gt;</code> sea visible. Si no aparece, <b>reabre los
-              grupos plegados</b> (el formulario colapsa secciones ya contestadas) y reintenta una
-              vez más.</p>
+            <h3><span class="ic">1</span> Busca la pregunta</h3>
+            <p>Espera a que el recuadro de la pregunta aparezca. Si no se ve, <b>reabre las
+              secciones colapsadas</b> (el formulario va doblando lo ya contestado) y vuelve a
+              buscar.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">2</span> Lo contesta</h3>
-            <p>Clic en la opción (<code>opcion()</code> / <code>opcionMulti()</code>) o escribe en
-              el input (<code>texto()</code>), traduciendo el valor de la matriz al texto exacto
-              del formulario con el catálogo <code>EQUIVALENCIAS</code>.</p>
+            <h3><span class="ic">2</span> La contesta con el caso</h3>
+            <p>Elige la opción o escribe el dato que trae el caso de la matriz, ajustando el texto
+              al que usa el formulario (si la matriz dice «casada», pulsa «Casado/a»).</p>
           </div>
           <div class="card">
-            <h3><span class="ic">3</span> Verifica que pegó</h3>
-            <p>Un dato solo se da por puesto si el bloque <b>perdió la clase</b>
-              <code>pendiente</code> (o la opción quedó marcada). Si tras 3 intentos no pegó, lo
-              anota y vuelca la lista de bloques pendientes.</p>
+            <h3><span class="ic">3</span> Confirma que quedó</h3>
+            <p>Una respuesta solo se da por puesta si el formulario la marcó de verdad. Si tras
+              tres intentos no quedó, lo apunta y sigue con lo demás.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">★</span> Tolera lo condicional</h3>
-            <p>Un bloque que no aparece <b>no es error</b>: se anota «(bloque no apareció:
-              condicional)» y se sigue. Casi todo el formulario depende de respuestas anteriores.</p>
+            <h3><span class="ic">★</span> Si una pregunta no sale</h3>
+            <p>Hay preguntas que solo aparecen con ciertas respuestas. Si una no sale, no es error:
+              se anota «no apareció» y se sigue — ese caso no la necesitaba.</p>
           </div>
         </div>
 
-        <figure class="code">
-          <figcaption><span class="f">ingenes_OB_Unificado_Vertical.spec.js</span><span>opcion() — contestar y verificar</span></figcaption>
-<pre><span class="kw">const</span> <span class="fn">opcion</span> = <span class="kw">async</span> (id, campo, textoOpcion, esperado) =&gt; {
-  <span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">bloqueVisible</span>(id))) {      <span class="cm">// no está: condicional, no error</span>
-    <span class="fn">dato</span>(campo, esperado, <span class="st">'(bloque no aparecio: condicional)'</span>);
-    <span class="kw">return</span> <span class="kw">false</span>;
-  }
-  <span class="kw">for</span> (<span class="kw">let</span> intento = <span class="nu">0</span>; intento &lt; <span class="nu">3</span>; intento++) {
-    <span class="kw">const</span> op = page.<span class="fn">locator</span>(<span class="st">`#pq-${id} .op`</span>).<span class="fn">filter</span>({ hasText: <span class="fn">regexOpcion</span>(textoOpcion) });
-    <span class="kw">await</span> op.<span class="fn">click</span>();
-    <span class="kw">if</span> (<span class="kw">await</span> <span class="fn">quedoLista</span>(id)) { <span class="fn">dato</span>(campo, esperado, puesto); <span class="kw">return</span> <span class="kw">true</span>; }
-  }
-  <span class="kw">await</span> <span class="fn">volcarPendientes</span>(<span class="st">`opcion no encontrada: ${id}`</span>);  <span class="cm">// qué quedó sin contestar</span>
-};</pre>
-        </figure>
 
         <div class="grid" style="margin-top:16px">
           <div class="card">
-            <h3><span class="ic">◆</span> Login de Federación</h3>
-            <p>Si aparece la pantalla de login (<code>#login-user</code>), entra solo con las
-              credenciales de QA (<code>QA_OB_USER</code> / <code>QA_OB_PASS</code>) y vuelve al
-              formulario.</p>
+            <h3><span class="ic">◆</span> Entra sola</h3>
+            <p>Si el formulario pide iniciar sesión, la prueba entra sola con el usuario de QA y
+              regresa al llenado.</p>
           </div>
           <div class="card">
             <h3><span class="ic">◆</span> Orden por etapas</h3>
@@ -146,16 +127,16 @@
               <b>agenda</b>. La corrida va de corrido, de la primera a la última.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">◆</span> Dedupe (caso existente)</h3>
-            <p>Si el producto detecta un caso duplicado, el spec pulsa la <b>tarjeta del caso</b>
+            <h3><span class="ic">◆</span> Caso repetido</h3>
+            <p>Si el producto detecta un caso duplicado, la prueba pulsa la <b>tarjeta del caso</b>
               (la que dice «Infunnel») para recuperarlo y seguir — nunca «Volver». Puede saltar
               tras el CP o al Guardar caso.</p>
           </div>
           <div class="card">
-            <h3><span class="ic">◆</span> Equivalencias</h3>
-            <p>La matriz trae valores crudos («casada», código <code>3</code>…) y
-              <code>traducir()</code> los convierte al texto del formulario («Casad…», «Si, tengo
-              las trompas ligadas»), tolerando acentos con <code>regexOpcion()</code>.</p>
+            <h3><span class="ic">◆</span> Habla el idioma del formulario</h3>
+            <p>La matriz trae valores en corto («casada», un código como <b>3</b>…) y la prueba los
+              convierte al texto exacto que muestra el formulario («Casado/a», «Sí, tengo las
+              trompas ligadas»), sin tropezar con acentos ni mayúsculas.</p>
           </div>
         </div>
       </section>
@@ -163,8 +144,8 @@
       <!-- ===== EL LLENADO ===== -->
       <section id="recorrido">
         <div class="secHead"><span class="bar"></span><h2>El llenado, bloque por bloque</h2></div>
-        <p class="secIntro">En el orden en que el spec los llena. Cada bloque muestra qué decide
-          del lead y el fragmento que lo controla. Los separadores marcan las etapas.</p>
+        <p class="secIntro">En el orden en que la prueba los llena. Cada uno dice qué dato del caso se decide ahí
+          y cómo se contesta. Los separadores marcan las etapas.</p>
 
         <div class="etapaHead"><span class="et">Etapa 1 · Filiación</span><span class="linea"></span></div>
 
@@ -174,16 +155,10 @@
           <article class="step" id="b1">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>nombre y apellidos</h3><span class="titulo">#pq-name · #pq-apellido · #pq-apellidoMaterno</span></div>
+              <div class="step-h"><h3>nombre y apellidos</h3></div>
               <div class="chips"><span class="chip">Nombre</span><span class="chip">Apellido</span><span class="chip sec">Materno: fijo «QA»</span></div>
               <p>Los tres primeros inputs. Nombre y apellido vienen de la matriz; el <b>apellido
                 materno no viene</b> y se llena con «QA» (o lo que traiga la columna si existe).</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 1</span><span>name · apellido · apellidoMaterno</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'name'</span>, <span class="st">'nombre'</span>, escenario.nombre);
-<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellido'</span>, <span class="st">'apellido'</span>, escenario.apellido);
-<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'apellidoMaterno'</span>, <span class="st">'apellido_materno'</span>, ... || <span class="st">'QA'</span>);</pre>
-              </figure>
             </div>
           </article>
 
@@ -191,7 +166,7 @@
           <article class="step" id="b2">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>correo</h3><span class="titulo">#pq-email</span></div>
+              <div class="step-h"><h3>correo</h3></div>
               <div class="chips"><span class="chip">Correo</span></div>
               <p>El correo del caso — el mismo con el que se buscó el renglón en la matriz. Es la
                 llave de todo: identifica la prueba de punta a punta.</p>
@@ -202,21 +177,12 @@
           <article class="step corte" id="b3">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>teléfono y lada</h3><span class="titulo">#pq-phone</span></div>
+              <div class="step-h"><h3>teléfono y lada</h3></div>
               <div class="chips"><span class="chip">Lada</span><span class="chip">Teléfono</span><span class="chip sec">Casilla «validado»</span></div>
               <p>Si la lada del escenario <b>no es México</b>, la elige en el select (o en el
                 buscador de ladas, según qué control monte el producto); si es MX o no viene, se
-                queda el default +52. Luego escribe el teléfono y marca la casilla de
+                se queda el +52 de México. Luego escribe el teléfono y marca la casilla de
                 <b>teléfono validado</b> si existe.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 1 · teléfono</span><span>lada → teléfono → casilla</span></figcaption>
-<pre><span class="kw">if</span> (lada &amp;&amp; !<span class="rx">/mexico|mx|\+?52/i</span>.<span class="fn">test</span>(lada)) {
-  <span class="cm">// select: empareja la opción por texto o por dígitos (+1, +34…)</span>
-  <span class="cm">// buscador: teclea el país y pulsa la opción que coincide</span>
-}
-<span class="kw">await</span> inputTelefono.<span class="fn">fill</span>(String(escenario.telefono));
-<span class="kw">await</span> casillaValidado.<span class="fn">check</span>();  <span class="cm">// si el producto la ofrece</span></pre>
-              </figure>
             </div>
           </article>
 
@@ -230,14 +196,10 @@
           <article class="step" id="b4">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>necesidad</h3><span class="titulo">#pq-need</span></div>
+              <div class="step-h"><h3>necesidad</h3></div>
               <div class="chips"><span class="chip">Objetivo</span></div>
               <p>Qué busca el paciente: tener un bebé o evaluar su salud reproductiva. Es la que
                 abre el cuestionario.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>need</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'need'</span>, <span class="st">'objetivo'</span>, <span class="fn">traducir</span>(<span class="st">'need'</span>, escenario.objetivo || <span class="st">'bebe'</span>), ...);</pre>
-              </figure>
             </div>
           </article>
 
@@ -245,16 +207,11 @@
           <article class="step" id="b5">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>sexo y pareja</h3><span class="titulo">#pq-sex · #pq-partner</span></div>
+              <div class="step-h"><h3>sexo y pareja</h3></div>
               <div class="chips"><span class="chip">Sexo</span><span class="chip">Pareja</span></div>
               <p>El <b>sexo del paciente</b> y si <b>tiene pareja y de qué sexo</b> (Mujer / Hombre /
                 Sin pareja). «Sin pareja» (o la columna vacía) apaga todos los bloques de pareja:
                 estado civil, edad de la pareja, hijos espejo y filiación de la pareja.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>sex · partner</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'sex'</span>, <span class="st">'sexo'</span>, <span class="fn">traducir</span>(<span class="st">'sex'</span>, escenario.sexo), ...);
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'partner'</span>, <span class="st">'pareja'</span>, <span class="fn">traducir</span>(<span class="st">'partner'</span>, escenario.pareja || <span class="st">'Sin pareja'</span>), ...);</pre>
-              </figure>
             </div>
           </article>
 
@@ -262,7 +219,7 @@
           <article class="step" id="b6">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>estado civil</h3><span class="titulo">#pq-civil · solo con pareja</span></div>
+              <div class="step-h"><h3>estado civil</h3><span class="titulo">solo con pareja</span></div>
               <div class="chips"><span class="chip">Estado civil</span></div>
               <p>Casado / Unión libre / Otro. Solo se contesta si el escenario trae pareja.</p>
             </div>
@@ -272,7 +229,7 @@
           <article class="step" id="b7">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>edades</h3><span class="titulo">#pq-age · #pq-partnerAge</span></div>
+              <div class="step-h"><h3>edades</h3><span class="titulo">paciente y pareja</span></div>
               <div class="chips"><span class="chip">Edad paciente</span><span class="chip">Edad pareja</span></div>
               <p>La edad del paciente y, con pareja, la de la pareja. Más abajo, estas mismas
                 edades derivan las <b>fechas de nacimiento</b> de la filiación.</p>
@@ -283,16 +240,10 @@
           <article class="step" id="b8">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>hijos (y espejo)</h3><span class="titulo">#pq-hijosSelf · #pq-hijosPartner</span></div>
+              <div class="step-h"><h3>hijos (y espejo)</h3><span class="titulo">paciente y pareja</span></div>
               <div class="chips"><span class="chip">Hijos</span><span class="chip sec">Pareja: espejo</span></div>
               <p>Cuántos hijos tiene el paciente. Los de la pareja <b>repiten la misma columna</b>
                 de la matriz (espejo): no hay columna aparte para los hijos de la pareja.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>hijosSelf · hijosPartner (espejo)</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosSelf'</span>, <span class="st">'hijos'</span>, <span class="fn">traducir</span>(<span class="st">'hijosSelf'</span>, escenario.hijos ?? <span class="nu">0</span>), ...);
-<span class="cm">// [espejo] hijosPartner repite la columna `hijos` de la matriz</span>
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'hijosPartner'</span>, <span class="st">'hijos (pareja, espejo)'</span>, ...);</pre>
-              </figure>
             </div>
           </article>
 
@@ -300,13 +251,13 @@
           <article class="step" id="b9">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>trompas</h3><span class="titulo">#pq-trompas · #pq-trompasOpt</span></div>
-              <div class="chips"><span class="chip">Ligadura</span><span class="chip sec">trompasOpt: default</span></div>
+              <div class="step-h"><h3>trompas</h3><span class="titulo">con su sub-pregunta</span></div>
+              <div class="chips"><span class="chip">Ligadura</span><span class="chip sec">sub-pregunta: respuesta fija</span></div>
               <p>Si la paciente está operada de las trompas. Si al responder «sí» el formulario
-                destapa la sub-pregunta (reversión / FIV), se contesta con el default del spec
+                destapa la sub-pregunta (reversión / FIV), la prueba responde siempre lo mismo
                 («No lo sé») porque <b>no viene de la matriz</b>.</p>
-              <div class="nota"><b>Ojo:</b> <code>trompasOpt</code> es un default fijo, no un dato
-                del escenario. Si un reporte lo marca, es ruido esperado.</div>
+              <div class="nota"><b>Ojo:</b> esa sub-pregunta lleva una respuesta fija de la prueba, no un
+                dato del caso. Si un reporte la marca, es ruido esperado.</div>
             </div>
           </article>
 
@@ -314,9 +265,9 @@
           <article class="step" id="b10">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>embarazos</h3><span class="titulo">#pq-embarazos</span></div>
+              <div class="step-h"><h3>embarazos</h3></div>
               <div class="chips"><span class="chip">Pérdidas</span></div>
-              <p>Embarazos que no llegaron a término. Si la hoja no trae el dato, usa el default
+              <p>Embarazos que no llegaron a término. Si la hoja no trae el dato, responde
                 «No, ninguno».</p>
             </div>
           </article>
@@ -325,7 +276,7 @@
           <article class="step" id="b11">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>gestación</h3><span class="titulo">#pq-gestacion</span></div>
+              <div class="step-h"><h3>gestación</h3></div>
               <div class="chips"><span class="chip">Gestación</span></div>
               <p>Si hay un padecimiento que impida llevar el embarazo. Una de las señales que
                 mandan el caso hacia subrogación.</p>
@@ -336,16 +287,11 @@
           <article class="step" id="b12">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>productos</h3><span class="titulo">#pq-productos · #pq-prodOther</span></div>
+              <div class="step-h"><h3>productos</h3></div>
               <div class="chips"><span class="chip sec">Fijo: «No / No lo sé»</span><span class="chip sec">Frase aleatoria</span></div>
-              <p>Qué técnica tiene en mente. El spec marca siempre <b>«No / No lo sé»</b> para no
-                sesgar el score, y en el campo abierto <code>prodOther</code> escribe una frase
+              <p>Qué técnica tiene en mente. La prueba marca siempre <b>«No / No lo sé»</b> para no
+                sesgar el score, y en el campo abierto de «¿cuál?» escribe una frase
                 aleatoria del catálogo (regla del QA: que no quede vacío).</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>productos · prodOther</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">opcionMulti</span>(<span class="st">'productos'</span>, <span class="st">'productos'</span>, <span class="st">'No / No lo se'</span>);
-<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'prodOther'</span>, <span class="st">'prodOther'</span>, <span class="fn">fraseProductoQA</span>());  <span class="cm">// aleatoria, se anota</span></pre>
-              </figure>
             </div>
           </article>
 
@@ -353,7 +299,7 @@
           <article class="step" id="b13">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>tiempo buscando</h3><span class="titulo">#pq-busqueda</span></div>
+              <div class="step-h"><h3>tiempo buscando</h3></div>
               <div class="chips"><span class="chip">Tiempo buscando</span></div>
               <p>Hace cuánto buscan el embarazo (menos de 6 meses … más de 5 años).</p>
             </div>
@@ -363,18 +309,12 @@
           <article class="step" id="b14">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>tratamientos y ciclos</h3><span class="titulo">#pq-txPrevios · #pq-ciclos</span></div>
-              <div class="chips"><span class="chip">Tratamientos previos</span><span class="chip sec">Ciclos: default</span></div>
+              <div class="step-h"><h3>tratamientos y ciclos</h3></div>
+              <div class="chips"><span class="chip">Tratamientos previos</span><span class="chip sec">ciclos: respuesta fija</span></div>
               <p>Los tratamientos vienen como <b>código</b> en la matriz (0 = FIV, 1 =
                 inseminaciones, 2 = medicamentos, 3 = ninguno). El código 4 (cirugías) no existe en
                 este formulario y <b>cae en «Ninguno»</b>, avisándolo. Si declaró tratamientos y el
-                formulario destapa «¿cuántos ciclos?», responde el default «1 ciclo».</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>txPrevios · ciclos</span></figcaption>
-<pre><span class="kw">if</span> (codigoTx === <span class="st">'4'</span>) <span class="cm">// Cirugias no existe aqui -> Ninguno (avisado)</span>
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'txPrevios'</span>, <span class="st">'tratamientos'</span>, <span class="fn">traducir</span>(<span class="st">'txPrevios'</span>, codigoTx), ...);
-<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">bloqueVisible</span>(<span class="st">'ciclos'</span>)) <span class="fn">opcion</span>(<span class="st">'ciclos'</span>, <span class="st">'ciclos'</span>, <span class="st">'1 ciclo'</span>);</pre>
-              </figure>
+                formulario destapa «¿cuántos ciclos?», responde «1 ciclo».</p>
             </div>
           </article>
 
@@ -382,7 +322,7 @@
           <article class="step" id="b15">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>tiempo bebé</h3><span class="titulo">#pq-tiempoEmb</span></div>
+              <div class="step-h"><h3>tiempo bebé</h3></div>
               <div class="chips"><span class="chip">Urgencia</span></div>
               <p>En cuánto tiempo quieren al bebé (lo antes posible, en uno o dos años, más
                 adelante).</p>
@@ -393,16 +333,11 @@
           <article class="step" id="b16">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>pregunta abierta</h3><span class="titulo">#pq-abierta (textarea)</span></div>
+              <div class="step-h"><h3>pregunta abierta</h3><span class="titulo">cuadro de texto libre</span></div>
               <div class="chips"><span class="chip">Texto libre</span></div>
               <p>El textarea abierto. Si la matriz trae texto, lo usa; si no, elige una <b>historia
                 aleatoria</b> de un catálogo con tres niveles de intención (poca / mediana / mucha),
                 y anota cuál tocó.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>abierta (matriz o aleatoria)</span></figcaption>
-<pre><span class="kw">const</span> historia = <span class="fn">textoAbiertaQA</span>();  <span class="cm">// escenario.abierta, o aleatoria por nivel de intención</span>
-<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'abierta'</span>, <span class="st">'abierta'</span>, historia, <span class="st">'textarea'</span>);</pre>
-              </figure>
             </div>
           </article>
 
@@ -410,10 +345,10 @@
           <article class="step" id="b17">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>motivo</h3><span class="titulo">#pq-motivo</span></div>
+              <div class="step-h"><h3>motivo</h3></div>
               <div class="chips"><span class="chip">Motivo de contacto</span></div>
               <p>Por qué quiere continuar. La matriz lo trae como código
-                (<code>continuar_como</code>): 0 = que un especialista revise el caso, 1 = segunda
+                : 0 = que un especialista revise el caso, 1 = segunda
                 opinión, 2 = está investigando, 3 y 4 = información personalizada. Un código fuera
                 del catálogo cae en la opción 0, avisándolo.</p>
             </div>
@@ -423,19 +358,13 @@
           <article class="step" id="b18">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>país, camino y CP</h3><span class="titulo">#pq-country · #pq-camino · #pq-cp</span></div>
+              <div class="step-h"><h3>país, camino y CP</h3></div>
               <div class="chips"><span class="chip">País</span><span class="chip sec">Camino: derivado</span><span class="chip">Código postal</span></div>
-              <p>El país de residencia. Si el formulario destapa «camino», el spec lo <b>deriva</b>:
+              <p>El país de residencia. Si el formulario destapa «camino», la prueba lo <b>deduce</b>:
                 con sucursal en el escenario elige «En una sucursal»; sin sucursal, «Necesito
                 orientación». El CP se escribe con un reintento (el bloque se monta tarde tras
                 elegir el país); aquí es opcional, pero <b>pesa en el NSE del score</b>, así que al
                 final de la corrida se verifica que no haya quedado vacío.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2</span><span>country → camino (derivado) → cp</span></figcaption>
-<pre><span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'country'</span>, <span class="st">'pais'</span>, <span class="fn">traducir</span>(<span class="st">'country'</span>, escenario.pais || <span class="st">'Mexico'</span>), ...);
-<span class="kw">await</span> <span class="fn">opcion</span>(<span class="st">'camino'</span>, <span class="st">'camino'</span>, haySucursal ? <span class="st">'En una sucursal'</span> : <span class="st">'Necesito orientacion'</span>);
-<span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">texto</span>(<span class="st">'cp'</span>, <span class="st">'cp'</span>, cpEsperado))) { <span class="cm">// reintento: se monta tarde</span> }</pre>
-              </figure>
             </div>
           </article>
 
@@ -443,18 +372,12 @@
           <article class="step corte" id="b19">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>sucursal</h3><span class="titulo">#pq-sucursal (select)</span></div>
+              <div class="step-h"><h3>sucursal</h3><span class="titulo">lista desplegable</span></div>
               <div class="chips"><span class="chip">Sucursal</span></div>
               <p>Elige la sucursal del escenario en el select, emparejando contra el catálogo
                 (Irvine/Orange County → «Orange County», Houston → «Houston», «mexico» a secas →
                 «Ciudad de México»). Si el escenario <b>no trae sucursal, no se elige nada</b>: la
                 agenda queda bloqueada hasta que el QA decida.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 2 · sucursal</span><span>select por catálogo</span></figcaption>
-<pre><span class="kw">const</span> op = opciones.<span class="fn">find</span>((o) =&gt; <span class="fn">sinAcentos</span>(o.texto).<span class="fn">includes</span>(<span class="fn">sinAcentos</span>(sucursalBuscada)));
-<span class="kw">if</span> (op) <span class="kw">await</span> sel.<span class="fn">selectOption</span>(op.value);
-<span class="cm">// sin sucursal en el escenario: NO se elige (la decide el QA)</span></pre>
-              </figure>
             </div>
           </article>
 
@@ -469,17 +392,12 @@
             <div class="num"></div>
             <div>
               <div class="step-h"><h3>guardar caso</h3><span class="titulo">botón «Guardar caso»</span></div>
-              <div class="chips"><span class="chip">Requisito del producto</span><span class="chip sec">Dedupe</span></div>
+              <div class="chips"><span class="chip">Requisito del producto</span><span class="chip sec">Caso repetido</span></div>
               <p>Pulsa <b>«Guardar caso»</b> (requisito del producto desde el 02/11/2026): es lo
                 que destapa los campos de Lead Completo. Espera a que el botón se habilite; si
                 nunca se habilita, sigue sin pulsarlo y lo avisa. Si al guardar aparece el
-                <b>dedupe</b> (caso existente), pulsa la tarjeta «Infunnel» para recuperar el caso
+                aviso de <b>caso existente</b>, pulsa la tarjeta «Infunnel» para recuperar el caso
                 y continuar.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 3</span><span>guardar caso + dedupe</span></figcaption>
-<pre><span class="kw">await</span> boton.<span class="fn">click</span>();                 <span class="cm">// «Guardar caso»: destapa Lead Completo</span>
-<span class="kw">await</span> <span class="fn">manejarDedupeTrasGuardar</span>();    <span class="cm">// caso existente: clic en la tarjeta Infunnel</span></pre>
-              </figure>
             </div>
           </article>
 
@@ -490,10 +408,9 @@
               <div class="step-h"><h3>repaso de pendientes</h3><span class="titulo">tras reabrir los grupos</span></div>
               <div class="chips"><span class="chip sec">Red de seguridad</span></div>
               <p>Al guardar, el formulario puede destapar bloques que antes no existían o dejar
-                alguno pendiente. El spec reabre los grupos plegados y <b>repasa</b>: embarazos de
-                la pareja (espejo de la columna <code>embarazos</code>), y cualquier bloque del
-                cuestionario que siga marcado <code>pendiente</code> se vuelve a contestar con el
-                mismo dato.</p>
+                alguno pendiente. La prueba reabre las secciones colapsadas y <b>repasa</b>: contesta los
+                embarazos de la pareja (espejo de la misma columna de la matriz) y vuelve a
+                contestar cualquier pregunta que haya quedado pendiente, con el mismo dato.</p>
             </div>
           </article>
 
@@ -501,7 +418,7 @@
           <article class="step" id="b22">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>recomendación</h3><span class="titulo">#pq-recom · #pq-recom_name</span></div>
+              <div class="step-h"><h3>recomendación</h3><span class="titulo">y el nombre de quien recomendó</span></div>
               <div class="chips"><span class="chip">Recomendado</span><span class="chip sec">Nombre: «Test Recomendado»</span></div>
               <p>Si el lead llegó recomendado (por su cuenta / amigo o familiar / doctor / paciente
                 o colaborador / beneficio o convenio). Si el formulario destapa el campo del
@@ -514,7 +431,7 @@
           <article class="step corte" id="b23">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>conociste</h3><span class="titulo">#pq-conociste</span></div>
+              <div class="step-h"><h3>conociste</h3></div>
               <div class="chips"><span class="chip">Canal</span></div>
               <p>Cómo conoció Ingenes (Google, TV/Radio, redes, evento, Inteligencia Artificial).
                 Solo aplica a quien <b>no</b> llegó recomendado; en la matriz, «Otro» equivale a
@@ -533,9 +450,9 @@
           <article class="step" id="b24">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>quiere agendar</h3><span class="titulo">#pq-quiereAgendar</span></div>
+              <div class="step-h"><h3>quiere agendar</h3></div>
               <div class="chips"><span class="chip sec">Fijo: «Sí, quiero agendar»</span></div>
-              <p>Default del spec: siempre «Sí, quiero agendar», para destapar la filiación y la
+              <p>Respuesta fija de la prueba: siempre «Sí, quiero agendar», para destapar la filiación y la
                 agenda. No viene de la matriz.</p>
             </div>
           </article>
@@ -544,17 +461,11 @@
           <article class="step" id="b25">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>filiación propia</h3><span class="titulo">#pq-filSelf</span></div>
+              <div class="step-h"><h3>filiación propia</h3></div>
               <div class="chips"><span class="chip sec">Fecha derivada de la edad</span></div>
               <p>Nombre y apellido (los del escenario) y la <b>fecha de nacimiento derivada</b>:
                 01/01 del año que resulta de restar la edad al año en curso. Así la edad clínica
                 coincide con la del cuestionario.</p>
-              <figure class="code">
-                <figcaption><span class="f">etapa 4</span><span>filSelf — fecha desde la edad</span></figcaption>
-<pre><span class="kw">const</span> f = <span class="fn">fechaDesdeEdad</span>(escenario.edad_usuario);  <span class="cm">// 01/01/(año − edad)</span>
-<span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">0</span>).<span class="fn">fill</span>(escenario.nombre);
-<span class="kw">await</span> inputs.<span class="fn">nth</span>(<span class="nu">3</span>).<span class="fn">fill</span>(f.dia); ... f.mes ... f.anio;</pre>
-              </figure>
             </div>
           </article>
 
@@ -562,7 +473,7 @@
           <article class="step" id="b26">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>filiación de la pareja</h3><span class="titulo">#pq-filPartner · solo con pareja</span></div>
+              <div class="step-h"><h3>filiación de la pareja</h3><span class="titulo">solo con pareja</span></div>
               <div class="chips"><span class="chip sec">Nombre fijo «pruebPareja»</span></div>
               <p>Igual que la propia, pero con nombre fijo «pruebPareja», el apellido del
                 escenario y la fecha derivada de la <b>edad de la pareja</b>.</p>
@@ -573,10 +484,10 @@
           <article class="step" id="b27">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>salud y seguros</h3><span class="titulo">#pq-padecimientos · #pq-antecedentes · #pq-familiares · #pq-seguros</span></div>
-              <div class="chips"><span class="chip sec">Defaults del spec</span></div>
+              <div class="step-h"><h3>salud y seguros</h3></div>
+              <div class="chips"><span class="chip sec">Respuestas fijas</span></div>
               <p>Cuatro bloques clínicos que <b>no vienen de la matriz</b> y se contestan con
-                defaults: padecimientos «Ninguno», antecedentes «Ninguno», familiares «No»,
+                respuestas fijas: padecimientos «Ninguno», antecedentes «Ninguno», familiares «No»,
                 seguros «Ninguna».</p>
             </div>
           </article>
@@ -585,9 +496,9 @@
           <article class="step" id="b28">
             <div class="num"></div>
             <div>
-              <div class="step-h"><h3>vasectomía</h3><span class="titulo">#pq-vasectomia · condicional</span></div>
-              <div class="chips"><span class="chip sec">Default: «No»</span></div>
-              <p>Solo si el formulario lo destapa (según el sexo y la pareja del caso). Default
+              <div class="step-h"><h3>vasectomía</h3><span class="titulo">solo si aplica</span></div>
+              <div class="chips"><span class="chip sec">Respuesta fija: «No»</span></div>
+              <p>Solo si el formulario lo destapa (según el sexo y la pareja del caso). Responde
                 «No»; tampoco viene de la matriz.</p>
             </div>
           </article>
@@ -599,18 +510,18 @@
       <section id="cierre">
         <div class="secHead"><span class="bar" style="background:var(--corte)"></span><h2>El cierre: la agenda es del QA</h2></div>
         <p class="secIntro">El llenado automático termina antes del calendario. Lo que sigue es
-          deliberadamente manual, y el spec lo deja claro en consola.</p>
+          manual a propósito, y la prueba lo avisa en su consola.</p>
 
         <div class="grid">
           <div class="card">
             <h3><span class="ic">1</span> Vuelca pendientes</h3>
-            <p>Lista en consola los bloques que quedaron marcados <code>pendiente</code> (campo
+            <p>Deja apuntado en su consola qué preguntas quedaron sin contestar (campo
               nuevo del producto o dato que decide el QA) y <b>verifica el CP</b>: si quedó vacío
               lo avisa, porque pesa en el NSE del score.</p>
           </div>
           <div class="card">
             <h3><span class="ic">2</span> La agenda, a mano</h3>
-            <p>«Sigue la AGENDA: elige día y hora a mano.» El spec no toca el calendario ni pulsa
+            <p>«Sigue la AGENDA: elige día y hora a mano.» La prueba no toca el calendario ni pulsa
               «Guardar pre-lead»: la cita la agenda el QA.</p>
           </div>
           <div class="card">
@@ -620,9 +531,8 @@
           </div>
           <div class="card">
             <h3><span class="ic">★</span> Aviso opcional</h3>
-            <p>Si existe <code>helpers/_telegram_bot.json</code> con token y permitidos, manda por
-              Telegram la lista de bloques pendientes al final del llenado. Sin ese archivo, no
-              avisa nada.</p>
+            <p>Si el QA configuró el aviso de Telegram, la prueba le manda al final
+              del llenado la lista de preguntas que quedaron pendientes. Si no, no avisa nada.</p>
           </div>
         </div>
 
