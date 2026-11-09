@@ -34,6 +34,7 @@ const MATRIZ_IC_BASE = [
     "Cambio de sucursales",
     "Pagos (Cupones Rangos, Gratituidad, Tarjeta)",
     "Interfaz Stripe",
+    "Difentes Tipos de Tarjetas",
   ]},
   { nombre: "Reglas", puntos: [
     "Edad (Subrogado)",
