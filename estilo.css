@@ -287,3 +287,8 @@ html.candado .doc-wrap{display:none}
 .card.tarjeta:hover{border-color:var(--acento);transform:translateY(-2px)}
 .numTarjeta{font-family:var(--mono);font-size:15px;color:var(--acento-ink);
   font-weight:600;letter-spacing:.5px;margin-top:4px}
+
+/* subpuntos de la matriz (web) */
+.micSub{background:var(--panel-2)}
+.micCodSub{padding-left:26px !important;color:var(--borde)}
+.micPuntoSub{padding-left:22px !important;font-size:13px}

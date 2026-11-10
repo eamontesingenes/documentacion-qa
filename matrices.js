@@ -89,16 +89,37 @@ function matChipHtml(codigo) {
 
 const matEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const matLetra = (i) => String.fromCharCode(65 + i);
+const matSubLetra = (k) => String.fromCharCode(97 + k);
+
+// Un punto puede ser texto simple o { p, sub: [...] }: el padre agrupa y el
+// estado vive en cada subpunto (C8 Pagos → C8a Tarjetas, C8b Cupones…).
+const matPunto = (item) => (typeof item === 'object' && item !== null)
+  ? { texto: item.p || '', subs: Array.isArray(item.sub) ? item.sub : [] }
+  : { texto: item, subs: [] };
 
 function matSeccionHtml(sec, si) {
   const letra = matLetra(si);
-  const filas = sec.puntos.map((p, pi) => `
+  const filas = sec.puntos.map((item, pi) => {
+    const { texto, subs } = matPunto(item);
+    const cod = letra + (pi + 1);
+    const padre = `
       <tr>
-        <td class="micCod">${letra}${pi + 1}</td>
-        <td class="micPunto">${matEsc(p)}</td>
-        <td class="micEstado">${matChipHtml(letra + (pi + 1))}</td>
+        <td class="micCod">${cod}</td>
+        <td class="micPunto"${subs.length ? ' style="font-weight:650;"' : ''}>${matEsc(texto)}</td>
+        <td class="micEstado">${subs.length
+          ? '<span class="micChip" style="cursor:default;" title="Este punto se evalúa por sus subpuntos">—</span>'
+          : matChipHtml(cod)}</td>
+        <td class="micObs">—</td>
+      </tr>`;
+    const hijas = subs.map((sub, ki) => `
+      <tr class="micSub">
+        <td class="micCod micCodSub">${cod}${matSubLetra(ki)}</td>
+        <td class="micPunto micPuntoSub">${matEsc(sub)}</td>
+        <td class="micEstado">${matChipHtml(cod + matSubLetra(ki))}</td>
         <td class="micObs">—</td>
       </tr>`).join('');
+    return padre + hijas;
+  }).join('');
   return `
   <div class="micSec">
     <div class="micSecHead">
@@ -193,22 +214,31 @@ function matArmarLibro() {
     s.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: GRIS } };
     s.border = bordes;
     fila++;
-    sec.puntos.forEach((p, pi) => {
-      const cod = letra + (pi + 1);
+    const filaPunto = (cod, texto, conEstado, sangria, negrita) => {
       const regla = MAT_PUNTAJE[matEstados[cod]];
       const r = ws.getRow(fila);
       r.getCell(1).value = cod;
-      r.getCell(2).value = p;
-      r.getCell(3).value = regla ? regla.excel : '';
+      r.getCell(2).value = texto;
+      r.getCell(3).value = (conEstado && regla) ? regla.excel : '';
       for (let c = 1; c <= 4; c++) r.getCell(c).border = bordes;
       r.getCell(1).font = { size: 10, color: { argb: 'FF8A929A' } };
-      r.getCell(2).alignment = { wrapText: true };
+      r.getCell(2).alignment = { wrapText: true, indent: sangria ? 2 : 0 };
+      if (negrita) r.getCell(2).font = { bold: true };
       r.getCell(3).alignment = { horizontal: 'center' };
-      r.getCell(3).dataValidation = {
-        type: 'list', allowBlank: true, formulae: ['"OK,WARN,FAIL,NA,Pendiente por probar"'],
-        showErrorMessage: true, errorTitle: 'Estado', error: 'Elige OK, WARN, FAIL, NA o Pendiente por probar',
-      };
+      if (conEstado) {
+        r.getCell(3).dataValidation = {
+          type: 'list', allowBlank: true, formulae: ['"OK,WARN,FAIL,NA,Pendiente por probar"'],
+          showErrorMessage: true, errorTitle: 'Estado', error: 'Elige OK, WARN, FAIL, NA o Pendiente por probar',
+        };
+      }
       fila++;
+    };
+    sec.puntos.forEach((item, pi) => {
+      const { texto, subs } = matPunto(item);
+      const cod = letra + (pi + 1);
+      // Con subpuntos el padre agrupa (negritas, sin estado ni desplegable).
+      filaPunto(cod, texto, subs.length === 0, false, subs.length > 0);
+      subs.forEach((sub, ki) => filaPunto(cod + matSubLetra(ki), sub, true, true, false));
     });
   });
 
