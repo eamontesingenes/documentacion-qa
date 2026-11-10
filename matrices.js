@@ -17,7 +17,7 @@ const MATRIZ_IC_BASE = [
     { p: "Validacion de Score NSE + INT ", sub: ["Score MX", "Score USA"] },
     { p: "Validacion de parametros (UTM's)", sub: ["organic", "paid", "Multiples parametros"] },
     "Envio a Kafka (validacion de Topicos)",
-    { p: "Envio a Infunnel", sub: ["Generacion de Deal ", "Datos nulos", "Datos completos y correctos"] },
+    { p: "Envio a Infunnel", sub: ["Generacion de Deal ", "Datos nulos", "Datos completos y correctos", "Validar generacion de meet para citas online"] },
     { p: "Envio a SI ", sub: ["Datos generales", "Preguntas de Filiacion"] },
     { p: "Envio a RS ", sub: ["Pacientes MX", "Pacientes USA e Internacionales"] },
     { p: "Envio a Hspot (Cita, Medico, Etc.)", sub: ["Citas", "Datos completos", "Flags y propietarios"] },
