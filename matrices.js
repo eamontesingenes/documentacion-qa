@@ -35,6 +35,7 @@ const MATRIZ_IC_BASE = [
     { p: "Pagos ", sub: ["Cupones por Rangos", "Cupon de gratituidad", "Tarjeta de Credito", "Notas por cobrar"] },
     "Interfaz Stripe",
     "Difentes Tipos de Tarjetas",
+    "Cancelacion por Tiempo",
   ]},
   { nombre: "Reglas", puntos: [
     "Edad (Subrogado >52)",
