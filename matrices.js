@@ -13,7 +13,7 @@ const MATRIZ_IC_BASE = [
     "Cambio de datos de contacto en validacion telefonica.",
   ]},
   { nombre: "Datos e Integracion", puntos: [
-    "Etapas de Leads (Prelead, Lead, Avanzado, Completo, Filiacion, etc.)",
+    { p: "Etapas de Leads (Prelead, Lead, Avanzado, Completo, Filiacion, etc.)", sub: ["Validaciones individuales"] },
     { p: "Validacion de Score NSE + INT ", sub: ["Score MX", "Score USA"] },
     { p: "Validacion de parametros (UTM's)", sub: ["organic", "paid", "Multiples parametros"] },
     "Envio a Kafka (validacion de Topicos)",
